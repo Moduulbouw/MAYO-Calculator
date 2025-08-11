@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MAYO Ligbox Calculator</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f0f0f0;
+            color: #333;
+        }
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: auto;
+        }
+        .logo {
+            display: block;
+            max-width: 200px;
+            margin: 0 auto 20px auto;
+        }
+        form {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        .input-group {
+            margin-bottom: 15px;
+        }
+        input, select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        #result {
+            margin-top: 20px;
+            background-color: #ecf0f1;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 0 5px rgba(0,0,0,0.1);
+        }
+        .advice, .suggestion {
+            font-family: 'Georgia', serif;
+            font-style: italic;
+            font-size: 1.1em;
+            margin-top: 10px;
+        }
+        .advice {
+            color: red;
+        }
+        #buttons {
+            margin-top: 20px;
+        }
+        button {
+            padding: 10px 15px;
+            margin-right: 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            background-color: #3498db;
+            color: white;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #2980b9;
+        }
+        @media (min-width: 601px) {
+            .input-group {
+                display: flex;
+                align-items: center;
+            }
+            label {
+                width: 30%;
+                margin-right: 5%;
+            }
+            input, select {
+                width: 65%;
+            }
+            button {
+                width: auto;
+            }
+        }
+        @media (max-width: 600px) {
+            form, #result {
+                padding: 10px;
+            }
+            input, select, button {
+                font-size: 14px;
+            }
+            .logo {
+                max-width: 150px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <img src="https://d2f0ora2gkri0g.cloudfront.net/12/92/1292fbc0-b827-4b5b-9326-fc529f91efb0.png" alt="MAYO Logo" class="logo">
+        <h1>MAYO Ligbox Calculator</h1>
+        <form id="calculatorForm">
+            <div class="input-group">
+                <label for="length">Lengte in cm:</label>
+                <input type="number" id="length" required min="1" placeholder="Voorbeeld: 2000" aria-label="Voer de lengte in cm in">
+            </div>
+
+            <div class="input-group">
+                <label for="width">Diepte in cm:</label>
+                <input type="number" id="width" required min="1" placeholder="Voorbeeld: 300" aria-label="Voer de diepte in cm in">
+            </div>
+
+            <div class="input-group">
+                <label for="boxWidth">Gewenste ligboxbreedte:</label>
+                <select id="boxWidth" aria-label="Selecteer de gewenste ligboxbreedte">
+                    <option value="110">110 cm</option>
+                    <option value="112.5">112,5 cm</option>
+                    <option value="115">115 cm</option>
+                    <option value="117.5">117,5 cm</option>
+                    <option value="120">120 cm</option>
+                    <option value="122.5">122,5 cm</option>
+                    <option value="125">125 cm</option>
+                </select>
+            </div>
+
+            <div class="input-group">
+                <label for="beugelLength">Beugel lengte:</label>
+                <select id="beugelLength" aria-label="Selecteer de beugellengte">
+                    <option value="175">175 cm</option>
+                    <option value="183">183 cm</option>
+                    <option value="198">198 cm</option>
+                    <option value="206">206 cm</option>
+                    <option value="213">213 cm</option>
+                </select>
+            </div>
+
+            <div class="input-group">
+                <label for="leftWall">Is er links een muur/wand sterk genoeg als afscheiding?</label>
+                <select id="leftWall" aria-label="Is linker muur/wand sterk genoeg?">
+                    <option value="yes">Ja</option>
+                    <option value="no">Nee</option>
+                </select>
+            </div>
+
+            <div class="input-group">
+                <label for="rightWall">Is er rechts een muur/wand sterk genoeg als afscheiding?</label>
+                <select id="rightWall" aria-label="Is rechter muur/wand sterk genoeg?">
+                    <option value="yes">Ja</option>
+                    <option value="no">Nee</option>
+                </select>
+            </div>
+
+            <div class="input-group">
+                <label for="doubleRow">Betreft het een dubbele rij?</label>
+                <select id="doubleRow" aria-label="Betreft het een dubbele rij?">
+                    <option value="no">Nee</option>
+                    <option value="yes">Ja</option>
+                </select>
+            </div>
+
+            <div class="input-group">
+                <label for="interestBoxes">Interesse in ligboxen:</label>
+                <input type="checkbox" id="interestBoxes" aria-label="Interesse in ligboxen">
+            </div>
+
+            <div class="input-group">
+                <label for="interestMattresses">Interesse in matrassen:</label>
+                <input type="checkbox" id="interestMattresses" aria-label="Interesse in matrassen">
+            </div>
+
+            <div id="result"></div>
+            <div id="contact-info">
+                <h2>Contactinformatie</h2>
+                <div class="input-group">
+                    <label for="name">Naam:</label>
+                    <input type="text" id="name" placeholder="Voer uw naam in" aria-label="Voer uw naam in">
+                </div>
+                <div class="input-group">
+                    <label for="address">Straat + Huisnummer:</label>
+                    <input type="text" id="address" placeholder="Voer uw adres in" aria-label="Voer uw adres in">
+                </div>
+                <div class="input-group">
+                    <label for="postcode">Postcode:</label>
+                    <input type="text" id="postcode" placeholder="Voer uw postcode in" aria-label="Voer uw postcode in">
+                </div>
+                <div class="input-group">
+                    <label for="place">Plaats:</label>
+                    <input type="text" id="place" placeholder="Voer uw plaats in" aria-label="Voer uw plaats in">
+                </div>
+                <div class="input-group">
+                    <label for="phone">Tel.:</label>
+                    <input type="tel" id="phone" placeholder="Voer uw telefoonnummer in" required aria-label="Voer uw telefoonnummer in">
+                </div>
+                <div class="input-group">
+                    <label for="email">Mail:</label>
+                    <input type="email" id="email" placeholder="Voer uw e-mailadres in" aria-label="Voer uw e-mailadres in">
+                </div>
+            </div>
+            <div id="buttons">
+                <button type="button" id="print" aria-label="Resultaten afdrukken">PRINT</button>
+                <button type="button" id="mail" aria-label="Resultaten verzenden via e-mail">MAIL</button>
+                <button type="button" id="whatsapp" aria-label="Resultaten verzenden via WhatsApp">WHATSAPP</button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        let lastWidth = null;
+        let lastDoubleRow = null;
+
+        function calculate() {
+            const lengthElem = document.getElementById('length');
+            const widthElem = document.getElementById('width');
+            const beugelLengthElem = document.getElementById('beugelLength');
+            const boxWidthElem = document.getElementById('boxWidth');
+            const leftWallElem = document.getElementById('leftWall');
+            const rightWallElem = document.getElementById('rightWall');
+            const doubleRowElem = document.getElementById('doubleRow');
+            const interestBoxesElem = document.getElementById('interestBoxes');
+            const interestMattressesElem = document.getElementById('interestMattresses');
+            const resultElem = document.getElementById('result');
+
+            const length = parseFloat(lengthElem.value);
+            const width = parseFloat(widthElem.value);
+            const selectedBoxWidth = parseFloat(boxWidthElem.value);
+            const leftWall = leftWallElem.value === 'yes';
+            const rightWall = rightWallElem.value === 'yes';
+            const doubleRow = doubleRowElem.value === 'yes';
+            const interestBoxes = interestBoxesElem.checked;
+            const interestMattresses = interestMattressesElem.checked;
+            const availableBoxWidths = [110, 112.5, 115, 117.5, 120, 122.5, 125];
+            const availableBeugelLengths = [175, 183, 198, 206, 213];
+
+            if (isNaN(length) || isNaN(width) || isNaN(selectedBoxWidth) || length <= 0 || width <= 0) {
+                resultElem.innerHTML = "<p class='advice'>⚠️ Voer geldige getallen in voor alle velden die groter zijn dan 0.</p>";
+                return;
+            }
+
+            // Automatisch beugellengte selecteren alleen als width of doubleRow verandert
+            if (width !== lastWidth || doubleRow !== lastDoubleRow) {
+                let optimalBeugelLength = availableBeugelLengths[0];
+                let bestSpaceDiff = Infinity;
+                availableBeugelLengths.forEach(beugelLength => {
+                    const spaceBehindBracket = doubleRow 
+                        ? (width - (2 * beugelLength) - 7) / 2 
+                        : width - (beugelLength + 13);
+                    const spaceDiff = Math.abs(spaceBehindBracket - 25); // Richt op 25 cm (midden van 15-35 cm)
+                    if (spaceDiff < bestSpaceDiff) {
+                        bestSpaceDiff = spaceDiff;
+                        optimalBeugelLength = beugelLength;
+                    }
+                });
+                beugelLengthElem.value = optimalBeugelLength;
+                lastWidth = width;
+                lastDoubleRow = doubleRow;
+            }
+
+            const beugelLength = parseFloat(beugelLengthElem.value); // Gebruik de geselecteerde (of handmatig gewijzigde) waarde
+
+            let bestBoxWidth = availableBoxWidths[0];
+            let minRemainingLength = length;
+
+            availableBoxWidths.forEach(boxWidth => {
+                const remainingLength = length % boxWidth;
+                if (remainingLength < minRemainingLength) {
+                    minRemainingLength = remainingLength;
+                    bestBoxWidth = boxWidth;
+                }
+            });
+
+            let numberOfBoxes = Math.floor(length / selectedBoxWidth);
+            let effectiveNumberOfBoxes = numberOfBoxes;
+            
+            let numberOfHeadBoards = Math.max(0, effectiveNumberOfBoxes - 2);
+            if (doubleRow) {
+                effectiveNumberOfBoxes *= 2; 
+                numberOfHeadBoards = Math.max(0, Math.floor(effectiveNumberOfBoxes / 2) - 2);
+            }
+
+            let numberOfPosts = numberOfBoxes; 
+            if (!leftWall && !rightWall) {
+                numberOfPosts += 1; 
+            } else if (leftWall && rightWall) {
+                numberOfPosts -= 1; 
+            }
+
+            let numberOfBrackets = numberOfPosts;
+            if (doubleRow) {
+                numberOfBrackets *= 2; 
+            }
+
+            let numberOfWavyWithers = effectiveNumberOfBoxes;
+            let numberOfCouplers = numberOfBrackets;
+
+            let numberOfEndPiecesWithers = doubleRow ? 4 : 2;
+            let numberOfEndPiecesHeadWithers = doubleRow ? 6 : 4;
+
+            const remainingLength = length % selectedBoxWidth;
+            let spaceBehindBracket = doubleRow ? (width - (2 * beugelLength) - 7) / 2 : width - (beugelLength + 13);
+
+            let numberOfClosingPlates = doubleRow ? 0 : numberOfPosts * 2;
+            let numberOfConcreteAnchors = numberOfPosts * 4;
+            let numberOfM12x100 = doubleRow ? numberOfPosts * 10 : numberOfPosts * 8;
+            let numberOfM10x60 = numberOfBrackets * 2 + (doubleRow ? 4 : 2);
+            let numberOfPlasticCaps = numberOfPosts;
+            let numberOfCapBrackets = numberOfBrackets;
+            let numberOfUBolts = numberOfBrackets * 3;
+            let numberOfMAYOMattresses = effectiveNumberOfBoxes;
+            let numberOfMAYOStrips = effectiveNumberOfBoxes + 1 + (doubleRow ? 1 : 0);
+            
+            let numberOfKneeRails = Math.ceil(length / 220);
+            if (doubleRow) {
+                numberOfKneeRails *= 2;
+            }
+
+            let advice = "";
+            if (spaceBehindBracket > 35) {
+                advice = `<span class="advice">⚠️ MAYO adviseert een <b>langere beugel</b>!</span>`;
+            } else if (spaceBehindBracket < 15) {
+                advice = `<span class="advice">⚠️ MAYO adviseert een <b>kortere beugel</b>!</span>`;
+            }
+
+            let suggestion = (selectedBoxWidth !== bestBoxWidth) ? 
+                `<span class="suggestion">Suggestie voor <b>optimale ligboxbreedte</b>: <b>${bestBoxWidth} cm</b></span>` : '';
+
+            resultElem.innerHTML = `
+                Aantal ligplekken: ${effectiveNumberOfBoxes} <br>
+                Overblijvende lengte: ${remainingLength.toFixed(2)} cm <br>
+                Gekozen ligboxbreedte: ${selectedBoxWidth} cm <br>
+                Gekozen beugel lengte: ${beugelLength} cm <br>
+                Ruimte achter beugel: ${spaceBehindBracket.toFixed(2)} cm <br>
+                Interesse in ligboxen: ${interestBoxes ? 'Ja' : 'Nee'} <br>
+                Interesse in matrassen: ${interestMattresses ? 'Ja' : 'Nee'} <br>
+                ${advice} <br>
+                ${suggestion} <br>
+                <br>
+                <b>Onderdelenlijst:</b>
+                <ul>
+                    <li><b>Standpalen:</b> ${numberOfPosts}</li>
+                    <li><b>Beugels:</b> ${numberOfBrackets}</li>
+                    <li><b>Kopbomen:</b> ${numberOfHeadBoards}</li>
+                    <li><b>Kopbomen eind:</b> 2</li>
+                    <li><b>Aantal gegolfde schoftbomen:</b> ${numberOfWavyWithers}</li>
+                    <li><b>Aantal koppelstuk:</b> ${numberOfCouplers}</li>
+                    <li><b>Aantal eindstuk schoftboom:</b> ${numberOfEndPiecesWithers}</li>
+                    <li><b>Aantal eindstuk kopboom/schoftboom:</b> ${numberOfEndPiecesHeadWithers}</li>
+                    <li><b>Sluitplaten:</b> ${numberOfClosingPlates}</li>
+                    <li><b>Betonankers:</b> ${numberOfConcreteAnchors}</li>
+                    <li><b>M12x100 bouten:</b> ${numberOfM12x100}</li>
+                    <li><b>M10x60 bouten:</b> ${numberOfM10x60}</li>
+                    <li><b>Plastic caps:</b> ${numberOfPlasticCaps}</li>
+                    <li><b>Kapbeugels:</b> ${numberOfCapBrackets}</li>
+                    <li><b>U-bouten:</b> ${numberOfUBolts}</li>
+                    <li><b>MAYO matras:</b> ${numberOfMAYOMattresses}</li>
+                    <li><b>MAYO strip:</b> ${numberOfMAYOStrips}</li>
+                    <li><b>MAYO kniebalk:</b> ${numberOfKneeRails}</li>
+                </ul>
+            `;
+        }
+
+        function validateContactInfo() {
+            const phone = document.getElementById('phone').value.trim();
+            if (!phone) {
+                document.getElementById('result').innerHTML += "<p class='advice'>⚠️ Vul uw telefoonnummer in voordat u verzendt.</p>";
+                return false;
+            }
+            return true;
+        }
+
+        document.getElementById('print').addEventListener('click', function() {
+            const resultElem = document.getElementById('result');
+            if (resultElem.innerHTML.includes('Voer geldige getallen')) {
+                resultElem.innerHTML += "<p class='advice'>⚠️ Bereken eerst geldige resultaten voordat u print.</p>";
+                return;
+            }
+            window.print();
+        });
+
+        document.getElementById('mail').addEventListener('click', function() {
+            if (!validateContactInfo()) return;
+
+            let resultElem = document.getElementById('result');
+            let resultContent = resultElem.innerText; // Gebruik innerText voor platte tekst
+            // Verwijder de suggestie uit de verzonden content
+            resultContent = resultContent.replace(/Suggestie voor optimale ligboxbreedte:.*\n?/, '');
+
+            // Includeer alleen ingevulde contactvelden
+            let contactInfo = [];
+            const contactFields = [
+                { id: 'name', label: 'Naam' },
+                { id: 'address', label: 'Adres' },
+                { id: 'postcode', label: 'Postcode' },
+                { id: 'place', label: 'Plaats' },
+                { id: 'phone', label: 'Telefoon' },
+                { id: 'email', label: 'E-mail' }
+            ];
+            contactFields.forEach(field => {
+                const value = document.getElementById(field.id).value.trim();
+                if (value) {
+                    contactInfo.push(`${field.label}: ${value}`);
+                }
+            });
+            const contactInfoText = contactInfo.join('\n');
+
+            let emailBody = encodeURIComponent(`Bekijk de resultaten van de Koeien Ligbox Calculator:\n\n${resultContent}\n\n${contactInfoText}`);
+            let subject = encodeURIComponent('Koeien Ligbox Calculator Resultaten');
+            let mailtoLink = `mailto:Rob@moduulbouw.nl?subject=${subject}&body=${emailBody}`;
+
+            try {
+                window.location.href = mailtoLink;
+            } catch (error) {
+                document.getElementById('result').innerHTML += "<p class='advice'>⚠️ Kon de e-mailclient niet openen. Zorg ervoor dat een e-mailclient is geïnstalleerd of kopieer de resultaten handmatig naar Rob@moduulbouw.nl.</p>";
+            }
+        });
+
+        document.getElementById('whatsapp').addEventListener('click', function() {
+            if (!validateContactInfo()) return;
+
+            let resultElem = document.getElementById('result');
+            let resultContent = resultElem.innerText;
+            // Verwijder de suggestie en beperk tot essentiële informatie
+            resultContent = resultContent.replace(/Suggestie voor optimale ligboxbreedte:.*\n?/, '');
+            // Neem alleen de onderdelenlijst en essentiële info op
+            const essentialContent = resultContent.match(/Aantal ligplekken:.*\n.*\n.*\n.*\n.*\n.*\n.*\nOnderdelenlijst:[\s\S]*/)[0];
+
+            // Includeer alleen ingevulde contactvelden
+            let contactInfo = [];
+            const contactFields = [
+                { id: 'name', label: 'Naam' },
+                { id: 'address', label: 'Adres' },
+                { id: 'postcode', label: 'Postcode' },
+                { id: 'place', label: 'Plaats' },
+                { id: 'phone', label: 'Telefoon' },
+                { id: 'email', label: 'E-mail' }
+            ];
+            contactFields.forEach(field => {
+                const value = document.getElementById(field.id).value.trim();
+                if (value) {
+                    contactInfo.push(`${field.label}: ${value}`);
+                }
+            });
+            const contactInfoText = contactInfo.join('\n');
+
+            let whatsappBody = encodeURIComponent(`Koeien Ligbox Calculator Resultaten:\n\n${essentialContent}\n\n${contactInfoText}`);
+            let phoneNumber = '31630569255';
+            let whatsappLink = `https://wa.me/${phoneNumber}?text=${whatsappBody}`;
+
+            try {
+                window.open(whatsappLink, '_blank');
+            } catch (error) {
+                document.getElementById('result').innerHTML += `
+                    <p class='advice'>⚠️ Kon WhatsApp niet openen. Zorg ervoor dat WhatsApp is geïnstalleerd of kopieer de onderstaande tekst naar WhatsApp (nummer: ${phoneNumber}):</p>
+                    <textarea readonly style="width: 100%; height: 100px;">Koeien Ligbox Calculator Resultaten:\n\n${essentialContent}\n\n${contactInfoText}</textarea>
+                `;
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const formInputs = document.querySelectorAll('#calculatorForm input, #calculatorForm select');
+            formInputs.forEach(input => {
+                input.addEventListener('change', function() {
+                    calculate();
+                });
+            });
+
+            // Initial calculation only if required fields are filled
+            if (document.getElementById('length').value && document.getElementById('width').value) {
+                calculate();
+            }
+        });
+    </script>
+</body>
+</html>
