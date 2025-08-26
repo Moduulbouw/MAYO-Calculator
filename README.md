@@ -1,1 +1,1 @@
-# MAYO-Calculator
+# mayo-calculator
