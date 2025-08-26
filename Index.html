@@ -3,484 +3,908 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MAYO Ligbox Calculator</title>
+    <title id="pageTitle">MAYO Ligbox Calculator</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            margin: 0;
-            padding: 20px;
-            background-color: #f0f0f0;
-            color: #333;
+        :root {
+            --primary: #3498db;
+            --primary-hover: #2980b9;
+            --success: #2ecc71;
+            --success-hover: #27ae60;
+            --error: #e74c3c;
+            --error-hover: #c0392b;
+            --bg: #f0f0f0;
+            --text: #333;
+            --shadow: 0 0 10px rgba(0,0,0,0.1);
         }
-        h1 {
-            text-align: center;
-            color: #2c3e50;
-            margin-bottom: 20px;
-        }
-        .container {
-            max-width: 800px;
-            margin: auto;
-        }
-        .logo {
-            display: block;
-            max-width: 200px;
-            margin: 0 auto 20px auto;
-        }
-        form {
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-        }
-        label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
-        }
-        .input-group {
-            margin-bottom: 15px;
-        }
-        input, select {
-            width: 100%;
-            padding: 8px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            box-sizing: border-box;
-        }
-        #result {
-            margin-top: 20px;
-            background-color: #ecf0f1;
-            padding: 15px;
-            border-radius: 8px;
-            box-shadow: 0 0 5px rgba(0,0,0,0.1);
-        }
-        .advice, .suggestion {
-            font-family: 'Georgia', serif;
-            font-style: italic;
-            font-size: 1.1em;
-            margin-top: 10px;
-        }
-        .advice {
-            color: red;
-        }
-        #buttons {
-            margin-top: 20px;
-        }
-        button {
-            padding: 10px 15px;
-            margin-right: 10px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            background-color: #3498db;
-            color: white;
-            font-size: 16px;
-        }
-        button:hover {
-            background-color: #2980b9;
-        }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 20px; background: var(--bg); color: var(--text); }
+        h1 { text-align: center; color: #2c3e50; margin-bottom: 20px; }
+        .container { max-width: 800px; margin: auto; }
+        .logo { display: block; max-width: 200px; margin: 0 auto 20px; }
+        form { background: white; padding: 20px; border-radius: 8px; box-shadow: var(--shadow); }
+        label { display: block; margin-bottom: 5px; font-weight: bold; }
+        .input-group { margin-bottom: 15px; }
+        input, select { width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box; }
+        .result { margin-top: 20px; background: #ecf0f1; padding: 15px; border-radius: 8px; box-shadow: 0 0 5px rgba(0,0,0,0.1); }
+        .advice, .suggestion { font-family: 'Georgia', serif; font-style: italic; font-size: 1.1em; margin-top: 10px; }
+        .advice { color: red; }
+        .sent-indicator { color: var(--success); font-weight: bold; margin-top: 10px; display: flex; align-items: center; }
+        .sent-indicator::before { content: '✔'; margin-right: 5px; }
+        .sent-indicator img { width: 16px; height: 16px; margin-left: 5px; vertical-align: middle; }
+        #buttons { margin-top: 20px; text-align: center; }
+        button { padding: 10px 15px; margin-right: 10px; border: none; border-radius: 4px; cursor: pointer; background: var(--primary); color: white; font-size: 16px; }
+        button:hover { background: var(--primary-hover); }
+        .auto-calculated { font-size: 0.8em; color: #666; margin-top: 2px; display: block; }
+        .calculate-button-container { margin-bottom: 20px; text-align: center; }
+        .tab-bar { display: flex; margin-bottom: 20px; border-bottom: 2px solid #ddd; }
+        .tab { padding: 10px 20px; cursor: pointer; background: #e0e0e0; border: 1px solid #ddd; border-bottom: none; margin-right: 5px; border-radius: 4px 4px 0 0; display: flex; align-items: center; }
+        .tab.active { background: white; border-bottom: 2px solid white; font-weight: bold; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        #addTab { margin: 10px 0; background: var(--success); }
+        #addTab:hover { background: var(--success-hover); }
+        .remove-tab { margin-left: 10px; color: var(--error); font-weight: bold; cursor: pointer; font-size: 14px; }
+        .remove-tab:hover { color: var(--error-hover); }
+        .language-bar { display: flex; justify-content: center; margin-bottom: 20px; }
+        .language-button { padding: 8px 12px; margin: 0 5px; border: 1px solid #ddd; border-radius: 4px; background: #e0e0e0; cursor: pointer; font-size: 14px; }
+        .language-button.active { background: var(--primary); color: white; font-weight: bold; }
+        .language-button:hover { background: var(--primary-hover); color: white; }
         @media (min-width: 601px) {
-            .input-group {
-                display: flex;
-                align-items: center;
-            }
-            label {
-                width: 30%;
-                margin-right: 5%;
-            }
-            input, select {
-                width: 65%;
-            }
-            button {
-                width: auto;
-            }
+            .input-group { display: flex; align-items: center; }
+            label { width: 30%; margin-right: 5%; }
+            input, select { width: 65%; }
+            button { width: auto; }
+            .auto-calculated { margin-left: 35%; }
         }
         @media (max-width: 600px) {
-            form, #result {
-                padding: 10px;
-            }
-            input, select, button {
-                font-size: 14px;
-            }
-            .logo {
-                max-width: 150px;
-            }
+            form, .result { padding: 10px; }
+            input, select, button { font-size: 14px; }
+            .logo { max-width: 150px; }
+            .tab { padding: 8px 15px; font-size: 14px; }
+            .remove-tab { font-size: 12px; margin-left: 5px; }
+            .language-button { padding: 6px 10px; font-size: 12px; }
+        }
+        @media print {
+            .language-bar, #addTab, .tab-bar, .calculate-button-container, #buttons { display: none; }
+            .tab-content { display: block; margin-bottom: 20px; }
+            .result, #contact-info { display: block; }
+            .tab-content h3 { margin-top: 20px; }
         }
     </style>
 </head>
 <body>
     <div class="container">
         <img src="https://d2f0ora2gkri0g.cloudfront.net/12/92/1292fbc0-b827-4b5b-9326-fc529f91efb0.png" alt="MAYO Logo" class="logo">
-        <h1>MAYO Ligbox Calculator</h1>
-        <form id="calculatorForm">
+        <h1 id="mainTitle">MAYO Ligbox Calculator</h1>
+        <div class="language-bar" id="languageBar">
+            <button class="language-button active" data-lang="nl">NL</button>
+            <button class="language-button" data-lang="de">DE</button>
+            <button class="language-button" data-lang="fr">FR</button>
+            <button class="language-button" data-lang="en">UK</button>
+        </div>
+        <button id="addTab" aria-label="Voeg nieuw boxdek toe">VOEG NIEUW BOXDEK TOE</button>
+        <div id="tabBar" class="tab-bar"></div>
+        <div id="tabContents"></div>
+        <div id="contact-info">
+            <h2 id="contactTitle">Contactinformatie</h2>
             <div class="input-group">
-                <label for="length">Lengte in cm:</label>
-                <input type="number" id="length" required min="1" placeholder="Voorbeeld: 2000" aria-label="Voer de lengte in cm in">
+                <label for="name" id="nameLabel">Naam:</label>
+                <input type="text" id="name" placeholder="Voer uw naam in" aria-label="Voer uw naam in">
             </div>
-
             <div class="input-group">
-                <label for="width">Diepte in cm:</label>
-                <input type="number" id="width" required min="1" placeholder="Voorbeeld: 300" aria-label="Voer de diepte in cm in">
+                <label for="address" id="addressLabel">Straat + Huisnummer:</label>
+                <input type="text" id="address" placeholder="Voer uw adres in" aria-label="Voer uw adres in">
             </div>
-
             <div class="input-group">
-                <label for="boxWidth">Gewenste ligboxbreedte:</label>
-                <select id="boxWidth" aria-label="Selecteer de gewenste ligboxbreedte">
-                    <option value="110">110 cm</option>
-                    <option value="112.5">112,5 cm</option>
-                    <option value="115">115 cm</option>
-                    <option value="117.5">117,5 cm</option>
-                    <option value="120">120 cm</option>
-                    <option value="122.5">122,5 cm</option>
-                    <option value="125">125 cm</option>
-                </select>
+                <label for="postcode" id="postcodeLabel">Postcode:</label>
+                <input type="text" id="postcode" placeholder="Voer uw postcode in" aria-label="Voer uw postcode in">
             </div>
-
             <div class="input-group">
-                <label for="beugelLength">Beugel lengte:</label>
-                <select id="beugelLength" aria-label="Selecteer de beugellengte">
-                    <option value="175">175 cm</option>
-                    <option value="183">183 cm</option>
-                    <option value="198">198 cm</option>
-                    <option value="206">206 cm</option>
-                    <option value="213">213 cm</option>
-                </select>
+                <label for="place" id="placeLabel">Plaats:</label>
+                <input type="text" id="place" placeholder="Voer uw plaats in" aria-label="Voer uw plaats in">
             </div>
-
             <div class="input-group">
-                <label for="leftWall">Is er links een muur/wand sterk genoeg als afscheiding?</label>
-                <select id="leftWall" aria-label="Is linker muur/wand sterk genoeg?">
-                    <option value="yes">Ja</option>
-                    <option value="no">Nee</option>
-                </select>
+                <label for="phone" id="phoneLabel">Tel.:</label>
+                <input type="tel" id="phone" placeholder="Voer uw telefoonnummer in" required aria-label="Voer uw telefoonnummer in" aria-required="true">
             </div>
-
             <div class="input-group">
-                <label for="rightWall">Is er rechts een muur/wand sterk genoeg als afscheiding?</label>
-                <select id="rightWall" aria-label="Is rechter muur/wand sterk genoeg?">
-                    <option value="yes">Ja</option>
-                    <option value="no">Nee</option>
-                </select>
+                <label for="email" id="emailLabel">Mail:</label>
+                <input type="email" id="email" placeholder="Voer uw e-mailadres in" aria-label="Voer uw e-mailadres in">
             </div>
-
             <div class="input-group">
-                <label for="doubleRow">Betreft het een dubbele rij?</label>
-                <select id="doubleRow" aria-label="Betreft het een dubbele rij?">
-                    <option value="no">Nee</option>
-                    <option value="yes">Ja</option>
-                </select>
-            </div>
-
-            <div class="input-group">
-                <label for="interestBoxes">Interesse in ligboxen:</label>
+                <label for="interestBoxes" id="interestBoxesLabel">Interesse in ligboxen:</label>
                 <input type="checkbox" id="interestBoxes" aria-label="Interesse in ligboxen">
             </div>
-
             <div class="input-group">
-                <label for="interestMattresses">Interesse in matrassen:</label>
+                <label for="interestMattresses" id="interestMattressesLabel">Interesse in matrassen:</label>
                 <input type="checkbox" id="interestMattresses" aria-label="Interesse in matrassen">
             </div>
-
-            <div id="result"></div>
-            <div id="contact-info">
-                <h2>Contactinformatie</h2>
-                <div class="input-group">
-                    <label for="name">Naam:</label>
-                    <input type="text" id="name" placeholder="Voer uw naam in" aria-label="Voer uw naam in">
-                </div>
-                <div class="input-group">
-                    <label for="address">Straat + Huisnummer:</label>
-                    <input type="text" id="address" placeholder="Voer uw adres in" aria-label="Voer uw adres in">
-                </div>
-                <div class="input-group">
-                    <label for="postcode">Postcode:</label>
-                    <input type="text" id="postcode" placeholder="Voer uw postcode in" aria-label="Voer uw postcode in">
-                </div>
-                <div class="input-group">
-                    <label for="place">Plaats:</label>
-                    <input type="text" id="place" placeholder="Voer uw plaats in" aria-label="Voer uw plaats in">
-                </div>
-                <div class="input-group">
-                    <label for="phone">Tel.:</label>
-                    <input type="tel" id="phone" placeholder="Voer uw telefoonnummer in" required aria-label="Voer uw telefoonnummer in">
-                </div>
-                <div class="input-group">
-                    <label for="email">Mail:</label>
-                    <input type="email" id="email" placeholder="Voer uw e-mailadres in" aria-label="Voer uw e-mailadres in">
-                </div>
-            </div>
-            <div id="buttons">
-                <button type="button" id="print" aria-label="Resultaten afdrukken">PRINT</button>
-                <button type="button" id="mail" aria-label="Resultaten verzenden via e-mail">MAIL</button>
-                <button type="button" id="whatsapp" aria-label="Resultaten verzenden via WhatsApp">WHATSAPP</button>
-            </div>
-        </form>
+        </div>
+        <div id="buttons">
+            <button type="button" id="print" aria-label="Resultaten afdrukken">PRINT</button>
+            <button type="button" id="mail" aria-label="Resultaten verzenden via e-mail">MAIL</button>
+            <button type="button" id="whatsapp" aria-label="Resultaten verzenden via WhatsApp">WHATSAPP</button>
+        </div>
     </div>
-
     <script>
-        let lastWidth = null;
-        let lastDoubleRow = null;
-
-        function calculate() {
-            const lengthElem = document.getElementById('length');
-            const widthElem = document.getElementById('width');
-            const beugelLengthElem = document.getElementById('beugelLength');
-            const boxWidthElem = document.getElementById('boxWidth');
-            const leftWallElem = document.getElementById('leftWall');
-            const rightWallElem = document.getElementById('rightWall');
-            const doubleRowElem = document.getElementById('doubleRow');
-            const interestBoxesElem = document.getElementById('interestBoxes');
-            const interestMattressesElem = document.getElementById('interestMattresses');
-            const resultElem = document.getElementById('result');
-
-            const length = parseFloat(lengthElem.value);
-            const width = parseFloat(widthElem.value);
-            const selectedBoxWidth = parseFloat(boxWidthElem.value);
-            const leftWall = leftWallElem.value === 'yes';
-            const rightWall = rightWallElem.value === 'yes';
-            const doubleRow = doubleRowElem.value === 'yes';
-            const interestBoxes = interestBoxesElem.checked;
-            const interestMattresses = interestMattressesElem.checked;
-            const availableBoxWidths = [110, 112.5, 115, 117.5, 120, 122.5, 125];
-            const availableBeugelLengths = [175, 183, 198, 206, 213];
-
-            if (isNaN(length) || isNaN(width) || isNaN(selectedBoxWidth) || length <= 0 || width <= 0) {
-                resultElem.innerHTML = "<p class='advice'>⚠️ Voer geldige getallen in voor alle velden die groter zijn dan 0.</p>";
-                return;
+        let currentLanguage = 'nl', tabCounter = 0, activeTab = null, tabData = {};
+        const defaultTranslations = {
+            pageTitle: 'MAYO Ligbox Calculator',
+            mainTitle: 'MAYO Ligbox Calculator',
+            addTab: 'VOEG NIEUW BOXDEK TOE',
+            addTabAria: 'Voeg nieuw boxdek toe',
+            tabLabel: 'Boxdek',
+            tabNamePrompt: 'Voer een naam in voor het nieuwe boxdek (of laat leeg voor standaardnaam):',
+            removeTabAria: 'Verwijder boxdek',
+            lengthLabel: 'Lengte in cm:', lengthPlaceholder: 'Voorbeeld: 2000', lengthAria: 'Voer de lengte in cm in',
+            widthLabel: 'Diepte in cm:', widthPlaceholder: 'Voorbeeld: 300', widthAria: 'Voer de diepte in cm in',
+            leftWallLabel: 'Is er links een muur/wand sterk genoeg als afscheiding?', leftWallAria: 'Is linker muur/wand sterk genoeg?',
+            leftWallOptions: { yes: 'Ja', no: 'Nee, ik wil met een boxbeugel eindigen', panel: 'Nee, ik wil een stalen eindpaneel bestellen' },
+            rightWallLabel: 'Is er rechts een muur/wand sterk genoeg als afscheiding?', rightWallAria: 'Is rechter muur/wand sterk genoeg?',
+            rightWallOptions: { yes: 'Ja', no: 'Nee, ik wil met een boxbeugel eindigen', panel: 'Nee, ik wil een stalen eindpaneel bestellen' },
+            doubleRowLabel: 'Betreft het een dubbele rij?', doubleRowAria: 'Betreft het een dubbele rij?',
+            boxWidthLabel: 'Gewenste ligboxbreedte:', boxWidthAria: 'Selecteer de gewenste ligboxbreedte',
+            beugelLengthLabel: 'Beugel lengte:', beugelLengthAria: 'Selecteer de beugellengte',
+            autoCalculated: '(wordt automatisch berekend maar kan handmatig worden aangepast)',
+            calculateButton: 'BEREKEN', calculateButtonAria: 'Bereken resultaten',
+            contactTitle: 'Contactinformatie',
+            nameLabel: 'Naam:', namePlaceholder: 'Voer uw naam in', nameAria: 'Voer uw naam in',
+            addressLabel: 'Straat + Huisnummer:', addressPlaceholder: 'Voer uw adres in', addressAria: 'Voer uw adres in',
+            postcodeLabel: 'Postcode:', postcodePlaceholder: 'Voer uw postcode in', postcodeAria: 'Voer uw postcode in',
+            placeLabel: 'Plaats:', placePlaceholder: 'Voer uw plaats in', placeAria: 'Voer uw plaats in',
+            phoneLabel: 'Tel.:', phonePlaceholder: 'Voer uw telefoonnummer in', phoneAria: 'Voer uw telefoonnummer in',
+            emailLabel: 'Mail:', emailPlaceholder: 'Voer uw e-mailadres in', emailAria: 'Voer uw e-mailadres in',
+            interestBoxesLabel: 'Interesse in ligboxen:', interestBoxesAria: 'Interesse in ligboxen',
+            interestMattressesLabel: 'Interesse in matrassen:', interestMattressesAria: 'Interesse in matrassen',
+            printButton: 'PRINT', printButtonAria: 'Resultaten afdrukken',
+            mailButton: 'MAIL', mailButtonAria: 'Resultaten verzenden via e-mail',
+            whatsappButton: 'WHATSAPP', whatsappButtonAria: 'Resultaten verzenden via WhatsApp',
+            yes: 'Ja', no: 'Nee',
+            invalidInput: '⚠️ Voer geldige getallen in voor alle velden die groter zijn dan 0.',
+            noTabs: 'Maak eerst een boxdek aan.',
+            invalidResults: '⚠️ Bereken eerst geldige resultaten voor het huidige tabblad voordat u verzendt via e-mail of WhatsApp.',
+            phoneRequired: '⚠️ Vul uw telefoonnummer in voordat u verzendt.',
+            emailError: '⚠️ Kon de e-mailclient niet openen. Kopieer de onderstaande tekst handmatig naar Rob@moduulbouw.nl of gebruik de kopieerknop.',
+            whatsappError: '⚠️ Kon WhatsApp niet openen. Kopieer de onderstaande tekst naar WhatsApp (nummer: {phoneNumber}) of gebruik de kopieerknop:',
+            lastTabError: 'Kan het laatste boxdek niet verwijderen. Er moet minimaal één boxdek blijven.',
+            confirmRemove: 'Weet je zeker dat je boxdek "{tabName}" wilt verwijderen?',
+            bodyTruncated: '⚠️ De resultaten zijn ingekort vanwege de tekenslimiet. Kopieer de volledige tekst hieronder of gebruik de kopieerknop.',
+            copySuccess: 'Resultaten gekopieerd naar klembord!',
+            copyError: 'Kon niet kopiëren, kopieer handmatig.',
+            copyTextAria: 'Resultaten om te kopiëren',
+            sentToMayo: 'Verzonden naar MAYO',
+            emailSentIconAlt: 'E-mail verzonden icoon',
+            whatsappSentIconAlt: 'WhatsApp verzonden icoon',
+            result: {
+                length: 'Ingevulde lengte: {value} cm',
+                width: 'Ingevulde diepte: {value} cm',
+                boxes: 'Aantal ligplekken: {value}',
+                remainingLength: 'Overblijvende lengte: {value} cm',
+                selectedBoxWidth: 'Gekozen ligboxbreedte: {value} cm',
+                beugelLength: 'Gekozen beugel lengte: {value} cm',
+                spaceBehind: 'Ruimte achter beugel: {value} cm',
+                longBracketAdvice: '⚠️ MAYO adviseert een <b>langere beugel</b>!',
+                shortBracketAdvice: '⚠️ MAYO adviseert een <b>kortere beugel</b>!',
+                suggestion: 'Suggestie voor <b>optimale ligboxbreedte</b>: <b>{value} cm</b>',
+                partsList: 'Onderdelenlijst:',
+                posts: 'Standpalen: {value}',
+                brackets: 'Beugels: {value}',
+                headBoards: 'Kopbomen: {value}',
+                endHeadBoards: 'Kopbomen eind: {value}',
+                wavyWithers: 'Aantal gegolfde schoftbomen: {value}',
+                couplers: 'Aantal koppelstuk: {value}',
+                endPiecesWithers: 'Aantal eindstuk schoftboom: {value}',
+                endPiecesHeadWithers: 'Aantal eindstuk kopboom/schoftboom: {value}',
+                closingPlates: 'Sluitplaten: {value}',
+                concreteAnchors: 'Betonankers: {value}',
+                m12x100: 'M12x100 bouten: {value}',
+                m10x60: 'M10x60 bouten: {value}',
+                plasticCaps: 'Plastic caps: {value}',
+                capBrackets: 'Kapbeugels: {value}',
+                uBolts: 'U-bouten: {value}',
+                mayoMattress: 'MAYO matras: {value}',
+                mayoStrip: 'MAYO strip: {value}',
+                kneeRails: 'MAYO kniebalk: {value}',
+                endPanels: 'Stalen eindpanelen: {value}',
+                emailSubject: 'Koeien Ligbox Calculator Resultaten',
+                whatsappTitle: 'Koeien Ligbox Calculator Resultaten'
             }
-
-            // Automatisch beugellengte selecteren alleen als width of doubleRow verandert
-            if (width !== lastWidth || doubleRow !== lastDoubleRow) {
-                let optimalBeugelLength = availableBeugelLengths[0];
-                let bestSpaceDiff = Infinity;
-                availableBeugelLengths.forEach(beugelLength => {
-                    const spaceBehindBracket = doubleRow 
-                        ? (width - (2 * beugelLength) - 7) / 2 
-                        : width - (beugelLength + 13);
-                    const spaceDiff = Math.abs(spaceBehindBracket - 25); // Richt op 25 cm (midden van 15-35 cm)
-                    if (spaceDiff < bestSpaceDiff) {
-                        bestSpaceDiff = spaceDiff;
-                        optimalBeugelLength = beugelLength;
-                    }
-                });
-                beugelLengthElem.value = optimalBeugelLength;
-                lastWidth = width;
-                lastDoubleRow = doubleRow;
-            }
-
-            const beugelLength = parseFloat(beugelLengthElem.value); // Gebruik de geselecteerde (of handmatig gewijzigde) waarde
-
-            let bestBoxWidth = availableBoxWidths[0];
-            let minRemainingLength = length;
-
-            availableBoxWidths.forEach(boxWidth => {
-                const remainingLength = length % boxWidth;
-                if (remainingLength < minRemainingLength) {
-                    minRemainingLength = remainingLength;
-                    bestBoxWidth = boxWidth;
+        };
+        const translations = {
+            nl: defaultTranslations,
+            de: {
+                ...defaultTranslations,
+                pageTitle: 'MAYO Kuh Kalkulator', mainTitle: 'MAYO Kuh Kalkulator',
+                addTab: 'NEUES LIEGEDECK HINZUFÜGEN', addTabAria: 'Neues Liegedeck hinzufügen',
+                tabLabel: 'Liegedeck', tabNamePrompt: 'Geben Sie einen Namen für das neue Liegedeck ein (oder lassen Sie es leer für den Standardnamen):',
+                removeTabAria: 'Liegedeck entfernen', lengthLabel: 'Länge in cm:', widthLabel: 'Tiefe in cm:',
+                leftWallLabel: 'Gibt es links eine starke Wand/Trennwand als Abgrenzung?', leftWallAria: 'Ist die linke Wand/Trennwand stark genug?',
+                leftWallOptions: { yes: 'Ja', no: 'Nein, ich möchte mit einer Boxbügel enden' },
+                rightWallLabel: 'Gibt es rechts eine starke Wand/Trennwand als Abgrenzung?', rightWallAria: 'Ist die rechte Wand/Trennwand stark genug?',
+                rightWallOptions: { yes: 'Ja', no: 'Nein, ich möchte mit einer Boxbügel enden' },
+                doubleRowLabel: 'Ist das eine Doppelreihe?', doubleRowAria: 'Ist das eine Doppelreihe?',
+                boxWidthLabel: 'Gewünschte Liegeboxbreite:', boxWidthAria: 'Wählen Sie die gewünschte Liegeboxbreite',
+                beugelLengthLabel: 'Bügel-Länge:', beugelLengthAria: 'Wählen Sie die Bügel-Länge',
+                autoCalculated: '(wird automatisch berechnet, kann aber manuell angepasst werden)',
+                calculateButton: 'BERECHNEN', calculateButtonAria: 'Ergebnisse berechnen',
+                contactTitle: 'Kontaktinformationen',
+                nameLabel: 'Name:', namePlaceholder: 'Geben Sie Ihren Namen ein', nameAria: 'Geben Sie Ihren Namen ein',
+                addressLabel: 'Straße + Hausnummer:', addressPlaceholder: 'Geben Sie Ihre Adresse ein', addressAria: 'Geben Sie Ihre Adresse ein',
+                postcodeLabel: 'Postleitzahl:', postcodePlaceholder: 'Geben Sie Ihre Postleitzahl ein', postcodeAria: 'Geben Sie Ihre Postleitzahl ein',
+                placeLabel: 'Ort:', placePlaceholder: 'Geben Sie Ihren Ort ein', placeAria: 'Geben Sie Ihren Ort ein',
+                phoneLabel: 'Tel.:', phonePlaceholder: 'Geben Sie Ihre Telefonnummer ein', phoneAria: 'Geben Sie Ihre Telefonnummer ein',
+                emailLabel: 'E-Mail:', emailPlaceholder: 'Geben Sie Ihre E-Mail-Adresse ein', emailAria: 'Geben Sie Ihre E-Mail-Adresse ein',
+                interestBoxesLabel: 'Interesse an Liegeboxen:', interestBoxesAria: 'Interesse an Liegeboxen',
+                interestMattressesLabel: 'Interesse an Matratzen:', interestMattressesAria: 'Interesse an Matratzen',
+                printButton: 'DRUCKEN', printButtonAria: 'Ergebnisse drucken',
+                mailButton: 'E-MAIL', mailButtonAria: 'Ergebnisse per E-Mail senden',
+                whatsappButton: 'WHATSAPP', whatsappButtonAria: 'Ergebnisse über WhatsApp senden',
+                yes: 'Ja', no: 'Nein',
+                invalidInput: '⚠️ Geben Sie gültige Zahlen für alle Felder ein, die größer als 0 sind.',
+                noTabs: 'Erstellen Sie zuerst ein Liegedeck.',
+                invalidResults: '⚠️ Berechnen Sie zuerst gültige Ergebnisse für das aktuelle Liegedeck, bevor Sie per E-Mail oder WhatsApp senden.',
+                phoneRequired: '⚠️ Geben Sie Ihre Telefonnummer ein, bevor Sie senden.',
+                emailError: '⚠️ E-Mail-Client konnte nicht geöffnet werden. Kopieren Sie den Text unten manuell nach Rob@moduulbouw.nl oder verwenden Sie die Kopiertaste.',
+                whatsappError: '⚠️ WhatsApp konnte nicht geöffnet werden. Kopieren Sie den Text unten nach WhatsApp (Nummer: {phoneNumber}) oder verwenden Sie die Kopiertaste:',
+                lastTabError: 'Das letzte Liegedeck kann nicht entfernt werden. Es muss mindestens ein Liegedeck bleiben.',
+                confirmRemove: 'Sind Sie sicher, dass Sie Liegedeck "{tabName}" entfernen möchten?',
+                bodyTruncated: '⚠️ Die Ergebnisse wurden aufgrund der Zeichenbegrenzung gekürzt. Kopieren Sie den vollständigen Text unten oder verwenden Sie die Kopierschaltfläche.',
+                copySuccess: 'Ergebnisse in die Zwischenablage kopiert!',
+                copyError: 'Konnte nicht kopiert werden, bitte manuell kopieren.',
+                copyTextAria: 'Ergebnisse zum Kopieren',
+                sentToMayo: 'An MAYO gesendet',
+                emailSentIconAlt: 'E-Mail gesendet Symbol',
+                whatsappSentIconAlt: 'WhatsApp gesendet Symbol',
+                result: {
+                    ...defaultTranslations.result,
+                    length: 'Eingegebene Länge: {value} cm',
+                    width: 'Eingegebene Tiefe: {value} cm',
+                    boxes: 'Anzahl Liegeplätze: {value}',
+                    remainingLength: 'Verbleibende Länge: {value} cm',
+                    selectedBoxWidth: 'Gewählte Liegeboxbreite: {value} cm',
+                    beugelLength: 'Gewählte Bügel-Länge: {value} cm',
+                    spaceBehind: 'Raum hinter Bügel: {value} cm',
+                    longBracketAdvice: '⚠️ MAYO empfiehlt einen <b>längeren Bügel</b>!',
+                    shortBracketAdvice: '⚠️ MAYO empfiehlt einen <b>kürzeren Bügel</b>!',
+                    suggestion: 'Vorschlag für <b>optimale Liegeboxbreite</b>: <b>{value} cm</b>',
+                    partsList: 'Teileliste:',
+                    posts: 'Pfosten: {value}',
+                    brackets: 'Flexbügel: {value}',
+                    headBoards: 'Kopfrohre: {value}',
+                    endHeadBoards: 'Kopfrohre Ende: {value}',
+                    wavyWithers: 'Anzahl Gebogen Näckrohre: {value}',
+                    couplers: 'Anzahl Kupplungen: {value}',
+                    endPiecesWithers: 'Anzahl Endstücke Näckenrohre: {value}',
+                    endPiecesHeadWithers: 'Anzahl Wand Endstücke: {value}',
+                    closingPlates: 'Abschlussplatten: {value}',
+                    concreteAnchors: 'Betonanker: {value}',
+                    m12x100: 'M12x100 Schrauben: {value}',
+                    m10x60: 'M10x60 Schrauben: {value}',
+                    plasticCaps: 'Kunststoffkappen: {value}',
+                    capBrackets: 'Bügelkappen: {value}',
+                    uBolts: 'U-Schrauben: {value}',
+                    mayoMattress: 'MAYO Matratze: {value}',
+                    mayoStrip: 'MAYO Schienen: {value}',
+                    kneeRails: 'MAYO Bugbretten: {value}',
+                    emailSubject: 'Kuh-Liegebox-Rechner Ergebnisse',
+                    whatsappTitle: 'Kuh-Liegebox-Rechner Ergebnisse'
                 }
+            },
+            fr: {
+                ...defaultTranslations,
+                pageTitle: 'Calculateur de logettes MAYO', mainTitle: 'Calculateur de logettes MAYO',
+                addTab: 'AJOUTER UN NOUVEAU PLATEAU', addTabAria: 'Ajouter un nouveau plateau',
+                tabLabel: 'Plateau', tabNamePrompt: 'Entrez un nom pour le nouveau plateau (ou laissez vide pour le nom par défaut) :',
+                removeTabAria: 'Supprimer le plateau', lengthLabel: 'Longueur en cm :', lengthPlaceholder: 'Exemple : 2000', lengthAria: 'Entrez la longueur en cm',
+                widthLabel: 'Profondeur en cm :', widthPlaceholder: 'Exemple : 300', widthAria: 'Entrez la profondeur en cm',
+                leftWallLabel: 'Y a-t-il un mur/sépartition suffisamment solide à gauche ?', leftWallAria: 'Le mur/sépartition à gauche est-il suffisamment solide ?',
+                leftWallOptions: { yes: 'Oui', no: 'Non, je souhaite terminer avec un arceau de box' },
+                rightWallLabel: 'Y a-t-il un mur/sépartition suffisamment solide à droite ?', rightWallAria: 'Le mur/sépartition à droite est-il suffisamment solide ?',
+                rightWallOptions: { yes: 'Oui', no: 'Non, je souhaite terminer avec un arceau de box' },
+                doubleRowLabel: 'S\'agit-il d\'une double rangée ?', doubleRowAria: 'S\'agit-il d\'une double rangée ?',
+                boxWidthLabel: 'Largeur de logette souhaitée :', boxWidthAria: 'Sélectionnez la largeur de logette souhaitée',
+                beugelLengthLabel: 'Longueur de l\'arceau :', beugelLengthAria: 'Sélectionnez la longueur de l\'arceau',
+                autoCalculated: '(calculé automatiquement mais peut être ajusté manuellement)',
+                calculateButton: 'CALCULER', calculateButtonAria: 'Calculer les résultats',
+                contactTitle: 'Informations de contact',
+                nameLabel: 'Nom :', namePlaceholder: 'Entrez votre nom', nameAria: 'Entrez votre nom',
+                addressLabel: 'Rue + Numéro :', addressPlaceholder: 'Entrez votre adresse', addressAria: 'Entrez votre adresse',
+                postcodeLabel: 'Code postal :', postcodePlaceholder: 'Entrez votre code postal', postcodeAria: 'Entrez votre code postal',
+                placeLabel: 'Ville :', placePlaceholder: 'Entrez votre ville', placeAria: 'Entrez votre ville',
+                phoneLabel: 'Tél. :', phonePlaceholder: 'Entrez votre numéro de téléphone', phoneAria: 'Entrez votre numéro de téléphone',
+                emailLabel: 'E-mail :', emailPlaceholder: 'Entrez votre adresse e-mail', emailAria: 'Entrez votre adresse e-mail',
+                interestBoxesLabel: 'Intérêt pour les logettes :', interestBoxesAria: 'Intérêt pour les logettes',
+                interestMattressesLabel: 'Intérêt pour les matelas :', interestMattressesAria: 'Intérêt pour les matelas',
+                printButton: 'IMPRIMER', printButtonAria: 'Imprimer les résultats',
+                mailButton: 'E-MAIL', mailButtonAria: 'Envoyer les résultats par e-mail',
+                whatsappButton: 'WHATSAPP', whatsappButtonAria: 'Envoyer les résultats via WhatsApp',
+                yes: 'Oui', no: 'Non',
+                invalidInput: '⚠️ Entrez des nombres valides pour tous les champs supérieurs à 0.',
+                noTabs: 'Créez d\'abord un plateau.',
+                invalidResults: '⚠️ Calculez d\'abord des résultats valides pour le plateau actuel avant d\'envoyer par e-mail ou WhatsApp.',
+                phoneRequired: '⚠️ Entrez votre numéro de téléphone avant d\'envoyer.',
+                emailError: '⚠️ Impossible d\'ouvrir le client e-mail. Copiez le texte ci-dessous manuellement à Rob@moduulbouw.nl ou utilisez le bouton de copie.',
+                whatsappError: '⚠️ Impossible d\'ouvrir WhatsApp. Copiez le texte ci-dessous vers WhatsApp (numéro : {phoneNumber}) ou utilisez le bouton de copie :',
+                lastTabError: 'Impossible de supprimer le dernier plateau. Il doit rester au moins un plateau.',
+                confirmRemove: 'Êtes-vous sûr de vouloir supprimer le plateau "{tabName}" ?',
+                bodyTruncated: '⚠️ Les résultats ont été tronqués en raison de la limite de caractères. Copiez le texte complet ci-dessous ou utilisez le bouton de copie.',
+                copySuccess: 'Résultats copiés dans le presse-papiers !',
+                copyError: 'Impossible de copier, veuillez copier manuellement.',
+                copyTextAria: 'Résultats à copier',
+                sentToMayo: 'Envoyé à MAYO',
+                emailSentIconAlt: 'Icône d\'e-mail envoyé',
+                whatsappSentIconAlt: 'Icône WhatsApp envoyé',
+                result: {
+                    ...defaultTranslations.result,
+                    length: 'Longueur saisie: {value} cm',
+                    width: 'Profondeur saisie: {value} cm',
+                    boxes: 'Nombre de places de couchage: {value}',
+                    remainingLength: 'Longueur restante: {value} cm',
+                    selectedBoxWidth: 'Largeur de logette choisie: {value} cm',
+                    beugelLength: 'Longueur d’arceau choisie: {value} cm',
+                    spaceBehind: 'Espace derrière l’arceau: {value} cm',
+                    longBracketAdvice: '⚠️ MAYO recommande un <b>arceau plus long</b>!',
+                    shortBracketAdvice: '⚠️ MAYO recommande un <b>arceau plus court</b>!',
+                    suggestion: 'Suggestion pour <b>largeur optimale de logette</b>: <b>{value} cm</b>',
+                    partsList: 'Liste des pièces:',
+                    posts: 'Poteaux : {value}',
+                    brackets: 'Arceaux : {value}',
+                    headBoards: 'Poutres de tête : {value}',
+                    endHeadBoards: 'Poutres de tête de fin : {value}',
+                    wavyWithers: 'Nombre de poutres d\'épaule ondulées : {value}',
+                    couplers: 'Nombre de pièces de couplage : {value}',
+                    endPiecesWithers: 'Nombre de pièces de fin pour poutres d\'épaule : {value}',
+                    endPiecesHeadWithers: 'Nombre de pièces de fin pour poutres de tête/épaule : {value}',
+                    closingPlates: 'Plaques de fermeture : {value}',
+                    concreteAnchors: 'Ancrages béton : {value}',
+                    m12x100: 'Boulons M12x100 : {value}',
+                    m10x60: 'Boulons M10x60 : {value}',
+                    plasticCaps: 'Capuchons en plastique : {value}',
+                    capBrackets: 'Capuchons d\'arceaux : {value}',
+                    uBolts: 'Boulons en U : {value}',
+                    mayoMattress: 'Matelas MAYO : {value}',
+                    mayoStrip: 'Bande MAYO : {value}',
+                    kneeRails: 'Barre de genou MAYO : {value}',
+                    emailSubject: 'Résultats du calculateur de logettes pour vaches',
+                    whatsappTitle: 'Résultats du calculateur de logettes pour vaches'
+                }
+            },
+            en: {
+                ...defaultTranslations,
+                pageTitle: 'MAYO Cubicle Calculator', mainTitle: 'MAYO Cubicle Calculator',
+                addTab: 'ADD NEW CUBICLE DECK', addTabAria: 'Add new cubicle deck',
+                tabLabel: 'Cubicle Deck', tabNamePrompt: 'Enter a name for the new cubicle deck (or leave empty for default name):',
+                removeTabAria: 'Remove cubicle deck', lengthLabel: 'Length in cm:', lengthPlaceholder: 'Example: 2000', lengthAria: 'Enter the length in cm',
+                widthLabel: 'Depth in cm:', widthPlaceholder: 'Example: 300', widthAria: 'Enter the depth in cm',
+                leftWallLabel: 'Is there a strong enough wall/partition on the left?', leftWallAria: 'Is the left wall/partition strong enough?',
+                leftWallOptions: { yes: 'Yes', no: 'No, I want to end with a loop' },
+                rightWallLabel: 'Is there a strong enough wall/partition on the right?', rightWallAria: 'Is the right wall/partition strong enough?',
+                rightWallOptions: { yes: 'Yes', no: 'No, I want to end with a loop' },
+                doubleRowLabel: 'Is it a double row?', doubleRowAria: 'Is it a double row?',
+                boxWidthLabel: 'Desired cubicle width:', boxWidthAria: 'Select the desired cubicle width',
+                beugelLengthLabel: 'Bracket length:', beugelLengthAria: 'Select the bracket length',
+                autoCalculated: '(automatically calculated but can be manually adjusted)',
+                calculateButton: 'CALCULATE', calculateButtonAria: 'Calculate results',
+                contactTitle: 'Contact Information',
+                nameLabel: 'Name:', namePlaceholder: 'Enter your name', nameAria: 'Enter your name',
+                addressLabel: 'Street + House Number:', addressPlaceholder: 'Enter your address', addressAria: 'Enter your address',
+                postcodeLabel: 'Postcode:', postcodePlaceholder: 'Enter your postcode', postcodeAria: 'Enter your postcode',
+                placeLabel: 'City:', placePlaceholder: 'Enter your city', placeAria: 'Enter your city',
+                phoneLabel: 'Tel.:', phonePlaceholder: 'Enter your phone number', phoneAria: 'Enter your phone number',
+                emailLabel: 'Email:', emailPlaceholder: 'Enter your email address', emailAria: 'Enter your email address',
+                interestBoxesLabel: 'Interest in cubicles:', interestBoxesAria: 'Interest in cubicles',
+                interestMattressesLabel: 'Interest in mattresses:', interestMattressesAria: 'Interest in mattresses',
+                printButton: 'PRINT', printButtonAria: 'Print results',
+                mailButton: 'EMAIL', mailButtonAria: 'Send results via email',
+                whatsappButton: 'WHATSAPP', whatsappButtonAria: 'Send results via WhatsApp',
+                yes: 'Yes', no: 'No',
+                invalidInput: '⚠️ Enter valid numbers for all fields greater than 0.',
+                noTabs: 'Create a cubicle deck first.',
+                invalidResults: '⚠️ Calculate valid results for the current cubicle deck before sending via email or WhatsApp.',
+                phoneRequired: '⚠️ Enter your phone number before sending.',
+                emailError: '⚠️ Could not open the email client. Copy the text below manually to Rob@moduulbouw.nl or use the copy button.',
+                whatsappError: '⚠️ Could not open WhatsApp. Copy the text below to WhatsApp (number: {phoneNumber}) or use the copy button:',
+                lastTabError: 'Cannot remove the last cubicle deck. At least one cubicle deck must remain.',
+                confirmRemove: 'Are you sure you want to remove cubicle deck "{tabName}"?',
+                bodyTruncated: '⚠️ The results have been truncated due to the character limit. Copy the full text below or use the copy button.',
+                copySuccess: 'Results copied to clipboard!',
+                copyError: 'Could not copy, please copy manually.',
+                copyTextAria: 'Results to copy',
+                sentToMayo: 'Sent to MAYO',
+                emailSentIconAlt: 'Email sent icon',
+                whatsappSentIconAlt: 'WhatsApp sent icon',
+                result: {
+                    ...defaultTranslations.result,
+                    length: 'Entered length: {value} cm',
+                    width: 'Entered depth: {value} cm',
+                    boxes: 'Number of cubicles: {value}',
+                    remainingLength: 'Remaining length: {value} cm',
+                    selectedBoxWidth: 'Selected cubicle width: {value} cm',
+                    beugelLength: 'Selected loop length: {value} cm',
+                    spaceBehind: 'Space behind loop: {value} cm',
+                    longBracketAdvice: '⚠️ MAYO recommends a <b>longer loop</b>!',
+                    shortBracketAdvice: '⚠️ MAYO recommends a <b>shorter loop</b>!',
+                    suggestion: 'Suggestion for <b>optimal cubicle width</b>: <b>{value} cm</b>',
+                    partsList: 'Parts list:',
+                    posts: 'Posts: {value}',
+                    brackets: 'Loops: {value}',
+                    headBoards: 'Midrails: {value}',
+                    endHeadBoards: 'End midrails: {value}',
+                    wavyWithers: 'Number of zigzag neckrails: {value}',
+                    couplers: 'Number of joiners: {value}',
+                    endPiecesWithers: 'Number of end pieces for zigzags: {value}',
+                    endPiecesHeadWithers: 'Endpiece wall: {value}',
+                    closingPlates: 'Backplates: {value}',
+                    concreteAnchors: 'Concrete anchors: {value}',
+                    m12x100: 'M12x100 bolts: {value}',
+                    m10x60: 'M10x60 bolts: {value}',
+                    plasticCaps: 'Plastic caps: {value}',
+                    capBrackets: 'Zigzag clamps: {value}',
+                    uBolts: 'U-bolts: {value}',
+                    mayoMattress: 'MAYO mattress: {value}',
+                    mayoStrip: 'MAYO strip: {value}',
+                    kneeRails: 'MAYO Brisketboard: {value}',
+                    emailSubject: 'Cow Cubicle Calculator Results',
+                    whatsappTitle: 'Cow Cubicle Calculator Results'
+                }
+            }
+        };
+        const elements = {
+            pageTitle: document.getElementById('pageTitle'),
+            mainTitle: document.getElementById('mainTitle'),
+            addTab: document.getElementById('addTab'),
+            tabBar: document.getElementById('tabBar'),
+            tabContents: document.getElementById('tabContents'),
+            contactInfo: document.getElementById('contact-info'),
+            print: document.getElementById('print'),
+            mail: document.getElementById('mail'),
+            whatsapp: document.getElementById('whatsapp')
+        };
+        function updateLanguage(lang) {
+            const contactValues = {
+                name: document.getElementById('name')?.value || '',
+                address: document.getElementById('address')?.value || '',
+                postcode: document.getElementById('postcode')?.value || '',
+                place: document.getElementById('place')?.value || '',
+                phone: document.getElementById('phone')?.value || '',
+                email: document.getElementById('email')?.value || '',
+                interestBoxes: document.getElementById('interestBoxes')?.checked || false,
+                interestMattresses: document.getElementById('interestMattresses')?.checked || false
+            };
+            const tabValues = Object.fromEntries(Object.entries(tabData).map(([tabId, data]) => [tabId, {
+                tabName: data.tabName,
+                length: document.getElementById(`length-${tabId}`)?.value || '',
+                width: document.getElementById(`width-${tabId}`)?.value || '',
+                boxWidth: document.getElementById(`boxWidth-${tabId}`)?.value || '',
+                leftWall: document.getElementById(`leftWall-${tabId}`)?.value || '',
+                rightWall: document.getElementById(`rightWall-${tabId}`)?.value || '',
+                doubleRow: document.getElementById(`doubleRow-${tabId}`)?.value || '',
+                beugelLength: document.getElementById(`beugelLength-${tabId}`)?.value || '',
+                isBeugelLengthManuallySet: data.isBeugelLengthManuallySet,
+                isValid: data.isValid,
+                isSentByEmail: data.isSentByEmail || false,
+                isSentByWhatsApp: data.isSentByWhatsApp || false,
+                parts: data.parts || {}
+            }]));
+            currentLanguage = lang;
+            document.querySelectorAll('.language-button').forEach(button => button.classList.toggle('active', button.dataset.lang === lang));
+            document.documentElement.lang = lang === 'en' ? 'en' : lang;
+            const t = translations[lang];
+            elements.pageTitle.textContent = t.pageTitle;
+            elements.mainTitle.textContent = t.mainTitle;
+            elements.addTab.textContent = t.addTab;
+            elements.addTab.setAttribute('aria-label', t.addTabAria);
+            elements.tabBar.innerHTML = '';
+            elements.tabContents.innerHTML = '';
+            Object.entries(tabValues).forEach(([tabId, data]) => {
+                const tabName = data.tabName || `${t.tabLabel} ${tabId.split('-')[1]}`;
+                const tab = document.createElement('div');
+                tab.className = `tab ${tabId === activeTab ? 'active' : ''}`;
+                tab.id = tabId;
+                tab.innerHTML = `${tabName}<span class="remove-tab" id="remove-${tabId}" aria-label="${t.removeTabAria} ${tabName}">&times;</span>`;
+                elements.tabBar.appendChild(tab);
+                tab.addEventListener('click', e => !e.target.classList.contains('remove-tab') && switchTab(tabId));
+                tab.querySelector(`#remove-${tabId}`).addEventListener('click', () => removeTab(tabId));
+                const tabContent = document.createElement('div');
+                tabContent.className = `tab-content ${tabId === activeTab ? 'active' : ''}`;
+                tabContent.id = `content-${tabId}`;
+                tabContent.innerHTML = createTabForm(tabId, t, data);
+                elements.tabContents.appendChild(tabContent);
+                document.getElementById(`calculate-${tabId}`).addEventListener('click', () => calculate(tabId));
+                document.getElementById(`beugelLength-${tabId}`).addEventListener('change', () => tabData[tabId].isBeugelLengthManuallySet = true);
+                if (data.isValid) calculate(tabId);
             });
-
-            let numberOfBoxes = Math.floor(length / selectedBoxWidth);
-            let effectiveNumberOfBoxes = numberOfBoxes;
-            
-            let numberOfHeadBoards = Math.max(0, effectiveNumberOfBoxes - 2);
-            if (doubleRow) {
-                effectiveNumberOfBoxes *= 2; 
-                numberOfHeadBoards = Math.max(0, Math.floor(effectiveNumberOfBoxes / 2) - 2);
-            }
-
-            let numberOfPosts = numberOfBoxes; 
-            if (!leftWall && !rightWall) {
-                numberOfPosts += 1; 
-            } else if (leftWall && rightWall) {
-                numberOfPosts -= 1; 
-            }
-
-            let numberOfBrackets = numberOfPosts;
-            if (doubleRow) {
-                numberOfBrackets *= 2; 
-            }
-
-            let numberOfWavyWithers = effectiveNumberOfBoxes;
-            let numberOfCouplers = numberOfBrackets;
-
-            let numberOfEndPiecesWithers = doubleRow ? 4 : 2;
-            let numberOfEndPiecesHeadWithers = doubleRow ? 6 : 4;
-
-            const remainingLength = length % selectedBoxWidth;
-            let spaceBehindBracket = doubleRow ? (width - (2 * beugelLength) - 7) / 2 : width - (beugelLength + 13);
-
-            let numberOfClosingPlates = doubleRow ? 0 : numberOfPosts * 2;
-            let numberOfConcreteAnchors = numberOfPosts * 4;
-            let numberOfM12x100 = doubleRow ? numberOfPosts * 10 : numberOfPosts * 8;
-            let numberOfM10x60 = numberOfBrackets * 2 + (doubleRow ? 4 : 2);
-            let numberOfPlasticCaps = numberOfPosts;
-            let numberOfCapBrackets = numberOfBrackets;
-            let numberOfUBolts = numberOfBrackets * 3;
-            let numberOfMAYOMattresses = effectiveNumberOfBoxes;
-            let numberOfMAYOStrips = effectiveNumberOfBoxes + 1 + (doubleRow ? 1 : 0);
-            
-            let numberOfKneeRails = Math.ceil(length / 220);
-            if (doubleRow) {
-                numberOfKneeRails *= 2;
-            }
-
-            let advice = "";
-            if (spaceBehindBracket > 35) {
-                advice = `<span class="advice">⚠️ MAYO adviseert een <b>langere beugel</b>!</span>`;
-            } else if (spaceBehindBracket < 15) {
-                advice = `<span class="advice">⚠️ MAYO adviseert een <b>kortere beugel</b>!</span>`;
-            }
-
-            let suggestion = (selectedBoxWidth !== bestBoxWidth) ? 
-                `<span class="suggestion">Suggestie voor <b>optimale ligboxbreedte</b>: <b>${bestBoxWidth} cm</b></span>` : '';
-
-            resultElem.innerHTML = `
-                Aantal ligplekken: ${effectiveNumberOfBoxes} <br>
-                Overblijvende lengte: ${remainingLength.toFixed(2)} cm <br>
-                Gekozen ligboxbreedte: ${selectedBoxWidth} cm <br>
-                Gekozen beugel lengte: ${beugelLength} cm <br>
-                Ruimte achter beugel: ${spaceBehindBracket.toFixed(2)} cm <br>
-                Interesse in ligboxen: ${interestBoxes ? 'Ja' : 'Nee'} <br>
-                Interesse in matrassen: ${interestMattresses ? 'Ja' : 'Nee'} <br>
-                ${advice} <br>
-                ${suggestion} <br>
-                <br>
-                <b>Onderdelenlijst:</b>
-                <ul>
-                    <li><b>Standpalen:</b> ${numberOfPosts}</li>
-                    <li><b>Beugels:</b> ${numberOfBrackets}</li>
-                    <li><b>Kopbomen:</b> ${numberOfHeadBoards}</li>
-                    <li><b>Kopbomen eind:</b> 2</li>
-                    <li><b>Aantal gegolfde schoftbomen:</b> ${numberOfWavyWithers}</li>
-                    <li><b>Aantal koppelstuk:</b> ${numberOfCouplers}</li>
-                    <li><b>Aantal eindstuk schoftboom:</b> ${numberOfEndPiecesWithers}</li>
-                    <li><b>Aantal eindstuk kopboom/schoftboom:</b> ${numberOfEndPiecesHeadWithers}</li>
-                    <li><b>Sluitplaten:</b> ${numberOfClosingPlates}</li>
-                    <li><b>Betonankers:</b> ${numberOfConcreteAnchors}</li>
-                    <li><b>M12x100 bouten:</b> ${numberOfM12x100}</li>
-                    <li><b>M10x60 bouten:</b> ${numberOfM10x60}</li>
-                    <li><b>Plastic caps:</b> ${numberOfPlasticCaps}</li>
-                    <li><b>Kapbeugels:</b> ${numberOfCapBrackets}</li>
-                    <li><b>U-bouten:</b> ${numberOfUBolts}</li>
-                    <li><b>MAYO matras:</b> ${numberOfMAYOMattresses}</li>
-                    <li><b>MAYO strip:</b> ${numberOfMAYOStrips}</li>
-                    <li><b>MAYO kniebalk:</b> ${numberOfKneeRails}</li>
-                </ul>
+            elements.contactInfo.innerHTML = `
+                <h2 id="contactTitle">${t.contactTitle}</h2>
+                <div class="input-group">
+                    <label for="name" id="nameLabel">${t.nameLabel}</label>
+                    <input type="text" id="name" placeholder="${t.namePlaceholder}" aria-label="${t.nameAria}" value="${contactValues.name}">
+                </div>
+                <div class="input-group">
+                    <label for="address" id="addressLabel">${t.addressLabel}</label>
+                    <input type="text" id="address" placeholder="${t.addressPlaceholder}" aria-label="${t.addressAria}" value="${contactValues.address}">
+                </div>
+                <div class="input-group">
+                    <label for="postcode" id="postcodeLabel">${t.postcodeLabel}</label>
+                    <input type="text" id="postcode" placeholder="${t.postcodePlaceholder}" aria-label="${t.postcodeAria}" value="${contactValues.postcode}">
+                </div>
+                <div class="input-group">
+                    <label for="place" id="placeLabel">${t.placeLabel}</label>
+                    <input type="text" id="place" placeholder="${t.placePlaceholder}" aria-label="${t.placeAria}" value="${contactValues.place}">
+                </div>
+                <div class="input-group">
+                    <label for="phone" id="phoneLabel">${t.phoneLabel}</label>
+                    <input type="tel" id="phone" placeholder="${t.phonePlaceholder}" required aria-label="${t.phoneAria}" aria-required="true" value="${contactValues.phone}">
+                </div>
+                <div class="input-group">
+                    <label for="email" id="emailLabel">${t.emailLabel}</label>
+                    <input type="email" id="email" placeholder="${t.emailPlaceholder}" aria-label="${t.emailAria}" value="${contactValues.email}">
+                </div>
+                <div class="input-group">
+                    <label for="interestBoxes" id="interestBoxesLabel">${t.interestBoxesLabel}</label>
+                    <input type="checkbox" id="interestBoxes" aria-label="${t.interestBoxesAria}" ${contactValues.interestBoxes ? 'checked' : ''}>
+                </div>
+                <div class="input-group">
+                    <label for="interestMattresses" id="interestMattressesLabel">${t.interestMattressesLabel}</label>
+                    <input type="checkbox" id="interestMattresses" aria-label="${t.interestMattressesAria}" ${contactValues.interestMattresses ? 'checked' : ''}>
+                </div>
+            `;
+            elements.print.textContent = t.printButton;
+            elements.print.setAttribute('aria-label', t.printButtonAria);
+            elements.mail.textContent = t.mailButton;
+            elements.mail.setAttribute('aria-label', t.mailButtonAria);
+            elements.whatsapp.textContent = t.whatsappButton;
+            elements.whatsapp.setAttribute('aria-label', t.whatsappButtonAria);
+            document.querySelector(`.language-button[data-lang="${lang}"]`).focus();
+        }
+        function createTabForm(tabId, t, values = {}) {
+            const emailIcon = values.isSentByEmail ? `<img src="assets/email-sent.svg" alt="${t.emailSentIconAlt}" class="sent-icon">` : '';
+            const whatsappIcon = values.isSentByWhatsApp ? `<img src="assets/whatsapp-sent.svg" alt="${t.whatsappSentIconAlt}" class="sent-icon">` : '';
+            const sentIndicator = (values.isSentByEmail || values.isSentByWhatsApp) ? `<p class="sent-indicator">${t.sentToMayo}${emailIcon}${whatsappIcon}</p>` : '';
+            return `
+                <form id="form-${tabId}">
+                    <div class="input-group">
+                        <label for="length-${tabId}">${t.lengthLabel}</label>
+                        <input type="number" id="length-${tabId}" required min="1" placeholder="${t.lengthPlaceholder}" aria-label="${t.lengthAria}" aria-required="true" value="${values.length || ''}">
+                    </div>
+                    <div class="input-group">
+                        <label for="width-${tabId}">${t.widthLabel}</label>
+                        <input type="number" id="width-${tabId}" required min="1" placeholder="${t.widthPlaceholder}" aria-label="${t.widthAria}" aria-required="true" value="${values.width || ''}">
+                    </div>
+                    <div class="input-group">
+                        <label for="leftWall-${tabId}">${t.leftWallLabel}</label>
+                        <select id="leftWall-${tabId}" aria-label="${t.leftWallAria}">
+                            <option value="yes" ${values.leftWall === 'yes' ? 'selected' : ''}>${t.leftWallOptions.yes}</option>
+                            <option value="no" ${values.leftWall === 'no' ? 'selected' : ''}>${t.leftWallOptions.no}</option>
+                            ${currentLanguage === 'nl' ? `<option value="panel" ${values.leftWall === 'panel' ? 'selected' : ''}>${t.leftWallOptions.panel}</option>` : ''}
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label for="rightWall-${tabId}">${t.rightWallLabel}</label>
+                        <select id="rightWall-${tabId}" aria-label="${t.rightWallAria}">
+                            <option value="yes" ${values.rightWall === 'yes' ? 'selected' : ''}>${t.rightWallOptions.yes}</option>
+                            <option value="no" ${values.rightWall === 'no' ? 'selected' : ''}>${t.rightWallOptions.no}</option>
+                            ${currentLanguage === 'nl' ? `<option value="panel" ${values.rightWall === 'panel' ? 'selected' : ''}>${t.rightWallOptions.panel}</option>` : ''}
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label for="doubleRow-${tabId}">${t.doubleRowLabel}</label>
+                        <select id="doubleRow-${tabId}" aria-label="${t.doubleRowAria}">
+                            <option value="no" ${values.doubleRow === 'no' ? 'selected' : ''}>${t.no}</option>
+                            <option value="yes" ${values.doubleRow === 'yes' ? 'selected' : ''}>${t.yes}</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label for="boxWidth-${tabId}">${t.boxWidthLabel}</label>
+                        <select id="boxWidth-${tabId}" aria-label="${t.boxWidthAria}">
+                            ${[110, 112.5, 115, 117.5, 120, 122.5, 125].map(v => `<option value="${v}" ${values.boxWidth === v.toString() ? 'selected' : ''}>${v} cm</option>`).join('')}
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label for="beugelLength-${tabId}">${t.beugelLengthLabel}</label>
+                        <span class="auto-calculated">${t.autoCalculated}</span>
+                        <select id="beugelLength-${tabId}" aria-label="${t.beugelLengthAria}">
+                            ${[175, 183, 198, 206, 213].map(v => `<option value="${v}" ${values.beugelLength === v.toString() ? 'selected' : ''}>${v} cm</option>`).join('')}
+                        </select>
+                    </div>
+                    <div class="calculate-button-container">
+                        <button type="button" id="calculate-${tabId}" aria-label="${t.calculateButtonAria}">${t.calculateButton}</button>
+                    </div>
+                    <div id="result-${tabId}" class="result" role="alert" aria-live="polite">${sentIndicator}</div>
+                </form>
             `;
         }
-
+        function getContactInfo() {
+            return [
+                { id: 'name', label: translations[currentLanguage].nameLabel },
+                { id: 'address', label: translations[currentLanguage].addressLabel },
+                { id: 'postcode', label: translations[currentLanguage].postcodeLabel },
+                { id: 'place', label: translations[currentLanguage].placeLabel },
+                { id: 'phone', label: translations[currentLanguage].phoneLabel },
+                { id: 'email', label: translations[currentLanguage].emailLabel },
+                { id: 'interestBoxes', label: translations[currentLanguage].interestBoxesLabel, type: 'checkbox' },
+                { id: 'interestMattresses', label: translations[currentLanguage].interestMattressesLabel, type: 'checkbox' }
+            ].map(field => {
+                const element = document.getElementById(field.id);
+                const value = field.type === 'checkbox' ? (element.checked ? translations[currentLanguage].yes : translations[currentLanguage].no) : element.value.trim();
+                return value ? `${field.label} ${value}` : '';
+            }).filter(Boolean).join('\n');
+        }
+        function createTab() {
+            const tabId = `tab-${++tabCounter}`;
+            const tabName = tabCounter === 1 ? `${translations[currentLanguage].tabLabel} ${tabCounter}` : 
+                            (prompt(translations[currentLanguage].tabNamePrompt, `${translations[currentLanguage].tabLabel} ${tabCounter}`) || `${translations[currentLanguage].tabLabel} ${tabCounter}`);
+            tabData[tabId] = { tabName, lastWidth: null, lastDoubleRow: null, isBeugelLengthManuallySet: false, isValid: false, isSentByEmail: false, isSentByWhatsApp: false, parts: {} };
+            const tab = document.createElement('div');
+            tab.className = 'tab';
+            tab.id = tabId;
+            tab.innerHTML = `${tabName}<span class="remove-tab" id="remove-${tabId}" aria-label="${translations[currentLanguage].removeTabAria} ${tabName}">&times;</span>`;
+            elements.tabBar.appendChild(tab);
+            tab.addEventListener('click', e => !e.target.classList.contains('remove-tab') && switchTab(tabId));
+            tab.querySelector(`#remove-${tabId}`).addEventListener('click', () => removeTab(tabId));
+            const tabContent = document.createElement('div');
+            tabContent.className = 'tab-content';
+            tabContent.id = `content-${tabId}`;
+            tabContent.innerHTML = createTabForm(tabId, translations[currentLanguage]);
+            elements.tabContents.appendChild(tabContent);
+            document.getElementById(`calculate-${tabId}`).addEventListener('click', () => calculate(tabId));
+            document.getElementById(`beugelLength-${tabId}`).addEventListener('change', () => tabData[tabId].isBeugelLengthManuallySet = true);
+            if (!activeTab) switchTab(tabId);
+        }
+        function switchTab(tabId) {
+            if (activeTab) {
+                document.getElementById(activeTab).classList.remove('active');
+                document.getElementById(`content-${activeTab}`).classList.remove('active');
+            }
+            activeTab = tabId;
+            document.getElementById(tabId).classList.add('active');
+            document.getElementById(`content-${activeTab}`).classList.add('active');
+        }
+        function removeTab(tabId) {
+            if (Object.keys(tabData).length <= 1) return alert(translations[currentLanguage].lastTabError);
+            if (!confirm(translations[currentLanguage].confirmRemove.replace('{tabName}', tabData[tabId].tabName))) return;
+            const tab = document.getElementById(tabId);
+            const tabContent = document.getElementById(`content-${tabId}`);
+            if (tab && tabContent) {
+                tab.remove();
+                tabContent.remove();
+                console.log(`Tab ${tabId} verwijderd`);
+            } else {
+                console.error(`Fout: Kon tab ${tabId} niet vinden`);
+                return;
+            }
+            delete tabData[tabId];
+            const remainingTabs = Object.keys(tabData);
+            if (remainingTabs.length > 0) switchTab(remainingTabs[0]);
+            else activeTab = null;
+        }
+        function calculate(tabId) {
+            const t = translations[currentLanguage];
+            const inputs = {
+                length: parseFloat(document.getElementById(`length-${tabId}`).value),
+                width: parseFloat(document.getElementById(`width-${tabId}`).value),
+                boxWidth: parseFloat(document.getElementById(`boxWidth-${tabId}`).value),
+                beugelLength: parseFloat(document.getElementById(`beugelLength-${tabId}`).value),
+                leftWall: document.getElementById(`leftWall-${tabId}`).value,
+                rightWall: document.getElementById(`rightWall-${tabId}`).value,
+                doubleRow: document.getElementById(`doubleRow-${tabId}`).value === 'yes'
+            };
+            const resultElem = document.getElementById(`result-${tabId}`);
+            if (isNaN(inputs.length) || isNaN(inputs.width) || isNaN(inputs.boxWidth) || inputs.length <= 0 || inputs.width <= 0) {
+                resultElem.innerHTML = `<p class='advice'>${t.invalidInput}</p>`;
+                tabData[tabId].isValid = false;
+                return;
+            }
+            tabData[tabId].isValid = true;
+            if (!tabData[tabId].isBeugelLengthManuallySet || inputs.width !== tabData[tabId].lastWidth || inputs.doubleRow !== tabData[tabId].lastDoubleRow) {
+                const beugelLengths = [175, 183, 198, 206, 213];
+                inputs.beugelLength = beugelLengths.reduce((best, length) => {
+                    const space = inputs.doubleRow ? (inputs.width - (2 * length) - 7) / 2 : inputs.width - (length + 13);
+                    return Math.abs(space - 25) < Math.abs((inputs.doubleRow ? (inputs.width - (2 * best) - 7) / 2 : inputs.width - (best + 13)) - 25) ? length : best;
+                }, beugelLengths[0]);
+                document.getElementById(`beugelLength-${tabId}`).value = inputs.beugelLength;
+                tabData[tabId].lastWidth = inputs.width;
+                tabData[tabId].lastDoubleRow = inputs.doubleRow;
+            }
+            const boxWidths = [110, 112.5, 115, 117.5, 120, 122.5, 125];
+            const bestBoxWidth = boxWidths.reduce((best, width) => inputs.length % width < inputs.length % best ? width : best, boxWidths[0]);
+            const numberOfBoxes = Math.floor(inputs.length / inputs.boxWidth);
+            const effectiveNumberOfBoxes = inputs.doubleRow ? numberOfBoxes * 2 : numberOfBoxes;
+            const postAdjustment = (inputs.leftWall === 'yes' || inputs.leftWall === 'panel') && (inputs.rightWall === 'yes' || inputs.rightWall === 'panel') ? -1 : 
+                                  (inputs.leftWall === 'no' && inputs.rightWall === 'no') ? 1 : 0;
+            const parts = {
+                boxes: effectiveNumberOfBoxes,
+                posts: numberOfBoxes + postAdjustment,
+                brackets: (numberOfBoxes + postAdjustment) * (inputs.doubleRow ? 2 : 1),
+                headBoards: inputs.doubleRow ? Math.max(0, Math.floor(effectiveNumberOfBoxes / 2) - 2) : Math.max(0, effectiveNumberOfBoxes - 2),
+                endHeadBoards: 2,
+                wavyWithers: effectiveNumberOfBoxes,
+                couplers: (numberOfBoxes + postAdjustment) * (inputs.doubleRow ? 2 : 1),
+                endPiecesWithers: inputs.doubleRow ? 4 : 2,
+                endPiecesHeadWithers: inputs.doubleRow ? 6 : 4,
+                closingPlates: inputs.doubleRow ? 0 : (numberOfBoxes + postAdjustment) * 2,
+                concreteAnchors: (numberOfBoxes + postAdjustment) * 4,
+                m12x100: (numberOfBoxes + postAdjustment) * (inputs.doubleRow ? 10 : 8),
+                m10x60: ((numberOfBoxes + postAdjustment) * (inputs.doubleRow ? 2 : 1) * 2) + (inputs.doubleRow ? 4 : 2),
+                plasticCaps: numberOfBoxes + postAdjustment,
+                capBrackets: (numberOfBoxes + postAdjustment) * (inputs.doubleRow ? 2 : 1),
+                uBolts: (numberOfBoxes + postAdjustment) * (inputs.doubleRow ? 2 : 1) * 3,
+                mayoMattress: effectiveNumberOfBoxes,
+                mayoStrip: effectiveNumberOfBoxes + 1 + (inputs.doubleRow ? 1 : 0),
+                kneeRails: Math.ceil(inputs.length / 220) * (inputs.doubleRow ? 2 : 1),
+                endPanels: currentLanguage === 'nl' ? (inputs.leftWall === 'panel' ? 1 : 0) + (inputs.rightWall === 'panel' ? 1 : 0) : 0
+            };
+            const remainingLength = inputs.length % inputs.boxWidth;
+            const spaceBehindBracket = inputs.doubleRow ? (inputs.width - (2 * inputs.beugelLength) - 7) / 2 : inputs.width - (inputs.beugelLength + 13);
+            const advice = spaceBehindBracket > 35 ? `<span class="advice">${t.result.longBracketAdvice}</span>` : spaceBehindBracket < 15 ? `<span class="advice">${t.result.shortBracketAdvice}</span>` : '';
+            const suggestion = inputs.boxWidth !== bestBoxWidth ? `<span class="suggestion">${t.result.suggestion.replace('{value}', bestBoxWidth)}</span>` : '';
+            tabData[tabId].parts = parts;
+            const emailIcon = tabData[tabId].isSentByEmail ? `<img src="assets/email-sent.svg" alt="${t.emailSentIconAlt}" class="sent-icon">` : '';
+            const whatsappIcon = tabData[tabId].isSentByWhatsApp ? `<img src="assets/whatsapp-sent.svg" alt="${t.whatsappSentIconAlt}" class="sent-icon">` : '';
+            const sentIndicator = (tabData[tabId].isSentByEmail || tabData[tabId].isSentByWhatsApp) ? `<p class="sent-indicator">${t.sentToMayo}${emailIcon}${whatsappIcon}</p>` : '';
+            resultElem.innerHTML = `
+                <h3>${t.tabLabel} ${tabData[tabId].tabName}</h3>
+                ${t.result.length.replace('{value}', inputs.length.toFixed(2))}<br>
+                ${t.result.width.replace('{value}', inputs.width.toFixed(2))}<br>
+                ${t.result.boxes.replace('{value}', effectiveNumberOfBoxes)}<br>
+                ${t.result.remainingLength.replace('{value}', remainingLength.toFixed(2))}<br>
+                ${t.result.selectedBoxWidth.replace('{value}', inputs.boxWidth)}<br>
+                ${t.result.beugelLength.replace('{value}', inputs.beugelLength)}<br>
+                ${t.result.spaceBehind.replace('{value}', spaceBehindBracket.toFixed(2))}<br>
+                ${advice}<br>
+                ${suggestion}<br><br>
+                <b>${t.result.partsList}</b>
+                <ul>
+                    ${Object.entries(parts).map(([key, value]) => key !== 'boxes' && (key !== 'endPanels' || currentLanguage === 'nl') ? `<li><b>${t.result[key].replace('{value}', value)}</b></li>` : '').join('')}
+                </ul>
+                ${sentIndicator}
+            `;
+        }
+        function validateTab(tabId) {
+            return tabData[tabId]?.isValid && !document.getElementById(`result-${tabId}`)?.innerHTML.includes(translations[currentLanguage].invalidInput);
+        }
+        function getTabResults(tabId) {
+            const t = translations[currentLanguage];
+            const data = tabData[tabId];
+            if (!data.isValid) return '';
+            const inputs = {
+                length: parseFloat(document.getElementById(`length-${tabId}`).value),
+                width: parseFloat(document.getElementById(`width-${tabId}`).value),
+                boxWidth: parseFloat(document.getElementById(`boxWidth-${tabId}`).value),
+                beugelLength: parseFloat(document.getElementById(`beugelLength-${tabId}`).value)
+            };
+            const remainingLength = inputs.length % inputs.boxWidth;
+            const spaceBehindBracket = data.doubleRow ? (inputs.width - (2 * inputs.beugelLength) - 7) / 2 : inputs.width - (inputs.beugelLength + 13);
+            const advice = spaceBehindBracket > 35 ? t.result.longBracketAdvice : spaceBehindBracket < 15 ? t.result.shortBracketAdvice : '';
+            const bestBoxWidth = [110, 112.5, 115, 117.5, 120, 122.5, 125].reduce((best, width) => inputs.length % width < inputs.length % best ? width : best, 110);
+            const suggestion = inputs.boxWidth !== bestBoxWidth ? t.result.suggestion.replace('{value}', bestBoxWidth) : '';
+            const partsList = `${t.result.partsList}\n${Object.entries(data.parts || {}).map(([key, value]) => key !== 'boxes' && (key !== 'endPanels' || currentLanguage === 'nl') ? t.result[key].replace('{value}', value) : '').filter(Boolean).join('\n')}`;
+            const result = `${t.tabLabel} ${data.tabName}\n${[
+                t.result.length.replace('{value}', inputs.length.toFixed(2)),
+                t.result.width.replace('{value}', inputs.width.toFixed(2)),
+                t.result.boxes.replace('{value}', data.parts?.boxes || 0),
+                t.result.remainingLength.replace('{value}', remainingLength.toFixed(2)),
+                t.result.selectedBoxWidth.replace('{value}', inputs.boxWidth),
+                t.result.beugelLength.replace('{value}', inputs.beugelLength),
+                t.result.spaceBehind.replace('{value}', spaceBehindBracket.toFixed(2)),
+                advice,
+                suggestion,
+                partsList
+            ].filter(Boolean).join('\n')}`;
+            console.log(`Resultaten voor tabblad ${tabId}:`, result);
+            return result;
+        }
         function validateContactInfo() {
-            const phone = document.getElementById('phone').value.trim();
-            if (!phone) {
-                document.getElementById('result').innerHTML += "<p class='advice'>⚠️ Vul uw telefoonnummer in voordat u verzendt.</p>";
+            if (!document.getElementById('phone').value.trim()) {
+                document.getElementById(`result-${activeTab}`).innerHTML += `<p class='advice'>${translations[currentLanguage].phoneRequired}</p>`;
                 return false;
             }
             return true;
         }
-
-        document.getElementById('print').addEventListener('click', function() {
-            const resultElem = document.getElementById('result');
-            if (resultElem.innerHTML.includes('Voer geldige getallen')) {
-                resultElem.innerHTML += "<p class='advice'>⚠️ Bereken eerst geldige resultaten voordat u print.</p>";
-                return;
-            }
+        elements.addTab.addEventListener('click', createTab);
+        elements.print.addEventListener('click', () => {
+            if (!activeTab) return alert(translations[currentLanguage].noTabs);
+            if (!validateTab(activeTab)) return alert(translations[currentLanguage].invalidResults);
             window.print();
         });
-
-        document.getElementById('mail').addEventListener('click', function() {
+        elements.mail.addEventListener('click', () => {
+            if (!activeTab) return alert(translations[currentLanguage].noTabs);
+            if (!validateTab(activeTab)) return alert(translations[currentLanguage].invalidResults);
             if (!validateContactInfo()) return;
-
-            let resultElem = document.getElementById('result');
-            let resultContent = resultElem.innerText; // Gebruik innerText voor platte tekst
-            // Verwijder de suggestie uit de verzonden content
-            resultContent = resultContent.replace(/Suggestie voor optimale ligboxbreedte:.*\n?/, '');
-
-            // Includeer alleen ingevulde contactvelden
-            let contactInfo = [];
-            const contactFields = [
-                { id: 'name', label: 'Naam' },
-                { id: 'address', label: 'Adres' },
-                { id: 'postcode', label: 'Postcode' },
-                { id: 'place', label: 'Plaats' },
-                { id: 'phone', label: 'Telefoon' },
-                { id: 'email', label: 'E-mail' }
-            ];
-            contactFields.forEach(field => {
-                const value = document.getElementById(field.id).value.trim();
-                if (value) {
-                    contactInfo.push(`${field.label}: ${value}`);
-                }
-            });
-            const contactInfoText = contactInfo.join('\n');
-
-            let emailBody = encodeURIComponent(`Bekijk de resultaten van de Koeien Ligbox Calculator:\n\n${resultContent}\n\n${contactInfoText}`);
-            let subject = encodeURIComponent('Koeien Ligbox Calculator Resultaten');
-            let mailtoLink = `mailto:Rob@moduulbouw.nl?subject=${subject}&body=${emailBody}`;
-
+            const results = getTabResults(activeTab);
+            if (!results) {
+                console.error('Geen geldige resultaten voor e-mail');
+                document.getElementById(`result-${activeTab}`).innerHTML += `<p class='advice'>${translations[currentLanguage].invalidResults}</p>`;
+                return;
+            }
+            const contactInfo = getContactInfo();
+            const fullContent = `${translations[currentLanguage].result.emailSubject} - ${tabData[activeTab].tabName}:\n\n${results}\n\n${contactInfo}`;
+            const maxEmailLength = 1000;
+            const emailBody = encodeURIComponent(fullContent.slice(0, maxEmailLength));
+            const subject = encodeURIComponent(`${translations[currentLanguage].result.emailSubject} - ${tabData[activeTab].tabName}`);
+            const mailtoLink = `mailto:Rob@moduulbouw.nl?subject=${subject}&body=${emailBody}`;
             try {
-                window.location.href = mailtoLink;
+                console.log('Proberen mailto-link te openen:', mailtoLink);
+                const link = document.createElement('a');
+                link.href = mailtoLink;
+                link.style.display = 'none';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                tabData[activeTab].isSentByEmail = true;
+                document.getElementById(`result-${activeTab}`).innerHTML += `<p class="sent-indicator">${translations[currentLanguage].sentToMayo}<img src="assets/email-sent.svg" alt="${translations[currentLanguage].emailSentIconAlt}" class="sent-icon"></p>`;
+                if (fullContent.length > maxEmailLength) {
+                    document.getElementById(`result-${activeTab}`).innerHTML += `<p class='advice'>${translations[currentLanguage].bodyTruncated}</p>`;
+                    showFallback('email', results, contactInfo);
+                }
             } catch (error) {
-                document.getElementById('result').innerHTML += "<p class='advice'>⚠️ Kon de e-mailclient niet openen. Zorg ervoor dat een e-mailclient is geïnstalleerd of kopieer de resultaten handmatig naar Rob@moduulbouw.nl.</p>";
+                console.error('Fout bij openen e-mail:', error);
+                showFallback('email', results, contactInfo);
+                if (fullContent.length > maxEmailLength) {
+                    document.getElementById(`result-${activeTab}`).innerHTML += `<p class='advice'>${translations[currentLanguage].bodyTruncated}</p>`;
+                }
+                tabData[activeTab].isSentByEmail = true;
+                document.getElementById(`result-${activeTab}`).innerHTML += `<p class="sent-indicator">${translations[currentLanguage].sentToMayo}<img src="assets/email-sent.svg" alt="${translations[currentLanguage].emailSentIconAlt}" class="sent-icon"></p>`;
             }
         });
-
-        document.getElementById('whatsapp').addEventListener('click', function() {
+        elements.whatsapp.addEventListener('click', () => {
+            if (!activeTab) return alert(translations[currentLanguage].noTabs);
+            if (!validateTab(activeTab)) return alert(translations[currentLanguage].invalidResults);
             if (!validateContactInfo()) return;
-
-            let resultElem = document.getElementById('result');
-            let resultContent = resultElem.innerText;
-            // Verwijder de suggestie en beperk tot essentiële informatie
-            resultContent = resultContent.replace(/Suggestie voor optimale ligboxbreedte:.*\n?/, '');
-            // Neem alleen de onderdelenlijst en essentiële info op
-            const essentialContent = resultContent.match(/Aantal ligplekken:.*\n.*\n.*\n.*\n.*\n.*\n.*\nOnderdelenlijst:[\s\S]*/)[0];
-
-            // Includeer alleen ingevulde contactvelden
-            let contactInfo = [];
-            const contactFields = [
-                { id: 'name', label: 'Naam' },
-                { id: 'address', label: 'Adres' },
-                { id: 'postcode', label: 'Postcode' },
-                { id: 'place', label: 'Plaats' },
-                { id: 'phone', label: 'Telefoon' },
-                { id: 'email', label: 'E-mail' }
-            ];
-            contactFields.forEach(field => {
-                const value = document.getElementById(field.id).value.trim();
-                if (value) {
-                    contactInfo.push(`${field.label}: ${value}`);
-                }
-            });
-            const contactInfoText = contactInfo.join('\n');
-
-            let whatsappBody = encodeURIComponent(`Koeien Ligbox Calculator Resultaten:\n\n${essentialContent}\n\n${contactInfoText}`);
-            let phoneNumber = '31630569255';
-            let whatsappLink = `https://wa.me/${phoneNumber}?text=${whatsappBody}`;
-
+            const results = getTabResults(activeTab);
+            if (!results) {
+                console.error('Geen geldige resultaten voor WhatsApp');
+                document.getElementById(`result-${activeTab}`).innerHTML += `<p class='advice'>${translations[currentLanguage].invalidResults}</p>`;
+                return;
+            }
+            const contactInfo = getContactInfo();
+            const fullContent = `${translations[currentLanguage].result.whatsappTitle} - ${tabData[activeTab].tabName}:\n\n${results}\n\n${contactInfo}`;
+            const maxWhatsAppLength = 3000;
+            const whatsappBody = encodeURIComponent(fullContent.slice(0, maxWhatsAppLength));
+            const phoneNumber = '31630569255';
             try {
-                window.open(whatsappLink, '_blank');
+                console.log('Proberen WhatsApp-link te openen:', `https://wa.me/${phoneNumber}?text=${whatsappBody}`);
+                window.open(`https://wa.me/${phoneNumber}?text=${whatsappBody}`, '_blank');
+                setTimeout(() => {
+                    if (document.hasFocus()) {
+                        showFallback('whatsapp', results, contactInfo, phoneNumber);
+                        if (fullContent.length > maxWhatsAppLength) {
+                            document.getElementById(`result-${activeTab}`).innerHTML += `<p class='advice'>${translations[currentLanguage].bodyTruncated}</p>`;
+                        }
+                    }
+                    tabData[activeTab].isSentByWhatsApp = true;
+                    document.getElementById(`result-${activeTab}`).innerHTML += `<p class="sent-indicator">${translations[currentLanguage].sentToMayo}<img src="assets/whatsapp-sent.svg" alt="${translations[currentLanguage].whatsappSentIconAlt}" class="sent-icon"></p>`;
+                }, 500);
             } catch (error) {
-                document.getElementById('result').innerHTML += `
-                    <p class='advice'>⚠️ Kon WhatsApp niet openen. Zorg ervoor dat WhatsApp is geïnstalleerd of kopieer de onderstaande tekst naar WhatsApp (nummer: ${phoneNumber}):</p>
-                    <textarea readonly style="width: 100%; height: 100px;">Koeien Ligbox Calculator Resultaten:\n\n${essentialContent}\n\n${contactInfoText}</textarea>
-                `;
+                console.error('Fout bij openen WhatsApp:', error);
+                showFallback('whatsapp', results, contactInfo, phoneNumber);
+                if (fullContent.length > maxWhatsAppLength) {
+                    document.getElementById(`result-${activeTab}`).innerHTML += `<p class='advice'>${translations[currentLanguage].bodyTruncated}</p>`;
+                }
+                tabData[activeTab].isSentByWhatsApp = true;
+                document.getElementById(`result-${activeTab}`).innerHTML += `<p class="sent-indicator">${translations[currentLanguage].sentToMayo}<img src="assets/whatsapp-sent.svg" alt="${translations[currentLanguage].whatsappSentIconAlt}" class="sent-icon"></p>`;
             }
         });
-
-        document.addEventListener('DOMContentLoaded', function() {
-            const formInputs = document.querySelectorAll('#calculatorForm input, #calculatorForm select');
-            formInputs.forEach(input => {
-                input.addEventListener('change', function() {
-                    calculate();
-                });
+        function showFallback(type, results, contactInfo, phoneNumber = '') {
+            const t = translations[currentLanguage];
+            const message = type === 'email' ? t.emailError : t.whatsappError.replace('{phoneNumber}', phoneNumber);
+            const content = `${t.result[type === 'email' ? 'emailSubject' : 'whatsappTitle']} - ${tabData[activeTab].tabName}:\n\n${results}\n\n${contactInfo}`;
+            const resultElem = document.getElementById(`result-${activeTab}`);
+            resultElem.innerHTML += `
+                <p class="advice">${message}</p>
+                <textarea readonly style="width: 100%; height: 100px;" aria-label="${t.copyTextAria}">${content}</textarea>
+                <button type="button" class="copy-button" style="margin-top: 10px; background: var(--success);">Kopieer naar klembord</button>
+            `;
+            resultElem.querySelector('.copy-button').addEventListener('click', () => {
+                navigator.clipboard.writeText(content)
+                    .then(() => alert(t.copySuccess))
+                    .catch(() => alert(t.copyError));
             });
-
-            // Initial calculation only if required fields are filled
-            if (document.getElementById('length').value && document.getElementById('width').value) {
-                calculate();
-            }
-        });
+        }
+        document.querySelectorAll('.language-button').forEach(button => button.addEventListener('click', () => {
+            if (button.dataset.lang !== currentLanguage) updateLanguage(button.dataset.lang);
+        }));
+        createTab();
     </script>
 </body>
 </html>
