@@ -1,910 +1,736 @@
 <!DOCTYPE html>
 <html lang="nl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title id="pageTitle">MAYO Ligbox Calculator</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <style>
-        :root {
-            --primary: #3498db;
-            --primary-hover: #2980b9;
-            --success: #2ecc71;
-            --success-hover: #27ae60;
-            --error: #e74c3c;
-            --error-hover: #c0392b;
-            --bg: #f0f0f0;
-            --text: #333;
-            --shadow: 0 0 10px rgba(0,0,0,0.1);
-        }
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 20px; background: var(--bg); color: var(--text); }
-        h1 { text-align: center; color: #2c3e50; margin-bottom: 20px; }
-        .container { max-width: 800px; margin: auto; }
-        .logo { display: block; max-width: 200px; margin: 0 auto 20px; }
-        form { background: white; padding: 20px; border-radius: 8px; box-shadow: var(--shadow); }
-        label { display: block; margin-bottom: 5px; font-weight: bold; }
-        .input-group { margin-bottom: 15px; }
-        input, select { width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box; }
-        .result { margin-top: 20px; background: #ecf0f1; padding: 15px; border-radius: 8px; box-shadow: 0 0 5px rgba(0,0,0,0.1); }
-        .advice, .suggestion { font-family: 'Georgia', serif; font-style: italic; font-size: 1.1em; margin-top: 10px; }
-        .advice { color: red; }
-        .sent-indicator { color: var(--success); font-weight: bold; margin-top: 10px; display: flex; align-items: center; }
-        .sent-indicator::before { content: '✔'; margin-right: 5px; }
-        .sent-indicator img { width: 16px; height: 16px; margin-left: 5px; vertical-align: middle; }
-        #buttons { margin-top: 20px; text-align: center; }
-        button { padding: 10px 15px; margin-right: 10px; border: none; border-radius: 4px; cursor: pointer; background: var(--primary); color: white; font-size: 16px; }
-        button:hover { background: var(--primary-hover); }
-        .auto-calculated { font-size: 0.8em; color: #666; margin-top: 2px; display: block; }
-        .calculate-button-container { margin-bottom: 20px; text-align: center; }
-        .tab-bar { display: flex; margin-bottom: 20px; border-bottom: 2px solid #ddd; }
-        .tab { padding: 10px 20px; cursor: pointer; background: #e0e0e0; border: 1px solid #ddd; border-bottom: none; margin-right: 5px; border-radius: 4px 4px 0 0; display: flex; align-items: center; }
-        .tab.active { background: white; border-bottom: 2px solid white; font-weight: bold; }
-        .tab-content { display: none; }
-        .tab-content.active { display: block; }
-        #addTab { margin: 10px 0; background: var(--success); }
-        #addTab:hover { background: var(--success-hover); }
-        .remove-tab { margin-left: 10px; color: var(--error); font-weight: bold; cursor: pointer; font-size: 14px; }
-        .remove-tab:hover { color: var(--error-hover); }
-        .language-bar { display: flex; justify-content: center; margin-bottom: 20px; }
-        .language-button { padding: 8px 12px; margin: 0 5px; border: 1px solid #ddd; border-radius: 4px; background: #e0e0e0; cursor: pointer; font-size: 14px; }
-        .language-button.active { background: var(--primary); color: white; font-weight: bold; }
-        .language-button:hover { background: var(--primary-hover); color: white; }
-        @media (min-width: 601px) {
-            .input-group { display: flex; align-items: center; }
-            label { width: 30%; margin-right: 5%; }
-            input, select { width: 65%; }
-            button { width: auto; }
-            .auto-calculated { margin-left: 35%; }
-        }
-        @media (max-width: 600px) {
-            form, .result { padding: 10px; }
-            input, select, button { font-size: 14px; }
-            .logo { max-width: 150px; }
-            .tab { padding: 8px 15px; font-size: 14px; }
-            .remove-tab { font-size: 12px; margin-left: 5px; }
-            .language-button { padding: 6px 10px; font-size: 12px; }
-        }
-        @media print {
-            .language-bar, #addTab, .tab-bar, .calculate-button-container, #buttons { display: none; }
-            .tab-content { display: block; margin-bottom: 20px; }
-            .result, #contact-info { display: block; }
-            .tab-content h3 { margin-top: 20px; }
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MAYO Ligbox Calculator</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+:root {
+  --primary: #1a5f9e;
+  --primary-hover: #144a7a;
+  --success: #27ae60;
+  --success-hover: #1e8449;
+  --error: #e74c3c;
+  --bg: #f4f6f8;
+  --card: #ffffff;
+  --text: #2c3e50;
+  --border: #dfe6e9;
+  --shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); line-height: 1.5; padding: 16px; }
+.container { max-width: 900px; margin: 0 auto; }
+.logo { display: block; max-width: 160px; margin: 0 auto 12px; }
+.product-hero { display: block; width: 100%; max-width: 520px; margin: 12px auto 16px; border-radius: 10px; background: #fff; box-shadow: 0 2px 12px rgba(0,0,0,.08); }
+.product-hero img { width: 100%; height: auto; display: block; border-radius: 10px; }
+h1 { text-align: center; font-size: 1.6rem; margin-bottom: 12px; color: var(--primary); }
+.lang-bar { display: flex; justify-content: center; gap: 6px; margin-bottom: 16px; }
+.lang-btn { padding: 6px 14px; border: 1px solid var(--border); border-radius: 6px; background: #eee; cursor: pointer; font-weight: 600; }
+.lang-btn.active { background: var(--primary); color: #fff; border-color: var(--primary); }
+.toolbar { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; justify-content: center; }
+.btn { padding: 10px 16px; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 0.95rem; display: inline-flex; align-items: center; gap: 6px; }
+.btn-primary { background: var(--primary); color: #fff; }
+.btn-primary:hover { background: var(--primary-hover); }
+.btn-success { background: var(--success); color: #fff; }
+.btn-success:hover { background: var(--success-hover); }
+.btn-outline { background: #fff; border: 1px solid var(--border); color: var(--text); }
+.btn-outline:hover { background: #f0f0f0; }
+.tabs { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 12px; border-bottom: 2px solid var(--border); }
+.tab { padding: 8px 14px; background: #e8ecef; border-radius: 6px 6px 0 0; cursor: pointer; display: flex; align-items: center; gap: 6px; font-size: 0.9rem; }
+.tab.active { background: var(--card); font-weight: 700; border: 1px solid var(--border); border-bottom: 2px solid var(--card); margin-bottom: -2px; }
+.tab .remove { color: var(--error); font-weight: bold; cursor: pointer; }
+.card { background: var(--card); border-radius: 10px; box-shadow: var(--shadow); padding: 20px; margin-bottom: 16px; }
+.form-grid { display: grid; gap: 14px; }
+@media (min-width: 640px) {
+  .form-grid { grid-template-columns: 1fr 1fr; }
+  .full { grid-column: 1 / -1; }
+}
+label { display: block; font-weight: 600; font-size: 0.9rem; margin-bottom: 4px; }
+input, select { width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 6px; font-size: 1rem; }
+input:focus, select:focus { outline: 2px solid var(--primary); border-color: transparent; }
+input.invalid { border-color: var(--error); background: #fff5f5; }
+.hint { font-size: 0.8rem; color: #7f8c8d; margin-top: 2px; }
+.result { background: #eef6fb; border-radius: 8px; padding: 16px; margin-top: 12px; margin-bottom: 8px; }
+.result h3 { margin-bottom: 8px; color: var(--primary); }
+.parts { list-style: none; display: grid; grid-template-columns: 1fr 1fr; gap: 4px 12px; margin-top: 8px; }
+.parts li { font-size: 0.9rem; }
+.advice { color: var(--error); font-weight: 600; margin: 8px 0; }
+.suggestion { color: #16a085; font-style: italic; margin: 6px 0; }
+.formula { font-size: 0.8rem; color: #636e72; background: #f8f9fa; padding: 8px; border-radius: 4px; margin-top: 10px; }
+.diagram { background: #fafafa; border: 1px solid var(--border); border-radius: 8px; padding: 12px; margin: 12px 0; overflow-x: auto; }
+.diagram svg { display: block; margin: 0 auto; height: auto; }
+.contact-grid { display: grid; gap: 12px; }
+@media (min-width: 500px) { .contact-grid { grid-template-columns: 1fr 1fr; } }
+.checkbox-row { display: flex; align-items: center; gap: 8px; }
+.sub-options { margin-left: 28px; margin-top: 6px; display: none; flex-direction: column; gap: 6px; }
+.sub-options.show { display: flex; }
+.actions { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-top: 16px; }
+.toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: #2c3e50; color: #fff; padding: 10px 20px; border-radius: 6px; z-index: 100; display: none; }
+.toast.show { display: block; }
+@media print {
+  .lang-bar, .toolbar, .tabs, .tabs-row, .actions, .btn, .product-hero { display: none !important; }
+  .card { box-shadow: none; border: 1px solid #ccc; }
+}
+</style>
 </head>
 <body>
-    <div class="container">
-        <img src="https://d2f0ora2gkri0g.cloudfront.net/12/92/1292fbc0-b827-4b5b-9326-fc529f91efb0.png" alt="MAYO Logo" class="logo">
-        <h1 id="mainTitle">MAYO Ligbox Calculator</h1>
-        <div class="language-bar" id="languageBar">
-            <button class="language-button active" data-lang="nl">NL</button>
-            <button class="language-button" data-lang="de">DE</button>
-            <button class="language-button" data-lang="fr">FR</button>
-            <button class="language-button" data-lang="en">UK</button>
-        </div>
-        <button id="addTab" aria-label="Voeg nieuw boxdek toe">VOEG NIEUW BOXDEK TOE</button>
-        <div id="tabBar" class="tab-bar"></div>
-        <div id="tabContents"></div>
-        <div id="contact-info">
-            <h2 id="contactTitle">Contactinformatie</h2>
-            <div class="input-group">
-                <label for="name" id="nameLabel">Naam:</label>
-                <input type="text" id="name" placeholder="Voer uw naam in" aria-label="Voer uw naam in">
-            </div>
-            <div class="input-group">
-                <label for="address" id="addressLabel">Straat + Huisnummer:</label>
-                <input type="text" id="address" placeholder="Voer uw adres in" aria-label="Voer uw adres in">
-            </div>
-            <div class="input-group">
-                <label for="postcode" id="postcodeLabel">Postcode:</label>
-                <input type="text" id="postcode" placeholder="Voer uw postcode in" aria-label="Voer uw postcode in">
-            </div>
-            <div class="input-group">
-                <label for="place" id="placeLabel">Plaats:</label>
-                <input type="text" id="place" placeholder="Voer uw plaats in" aria-label="Voer uw plaats in">
-            </div>
-            <div class="input-group">
-                <label for="phone" id="phoneLabel">Tel.:</label>
-                <input type="tel" id="phone" placeholder="Voer uw telefoonnummer in" required aria-label="Voer uw telefoonnummer in" aria-required="true">
-            </div>
-            <div class="input-group">
-                <label for="email" id="emailLabel">Mail:</label>
-                <input type="email" id="email" placeholder="Voer uw e-mailadres in" aria-label="Voer uw e-mailadres in">
-            </div>
-            <div class="input-group">
-                <label for="interestBoxes" id="interestBoxesLabel">Interesse in ligboxen:</label>
-                <input type="checkbox" id="interestBoxes" aria-label="Interesse in ligboxen">
-            </div>
-            <div class="input-group">
-                <label for="interestMattresses" id="interestMattressesLabel">Interesse in matrassen:</label>
-                <input type="checkbox" id="interestMattresses" aria-label="Interesse in matrassen">
-            </div>
-        </div>
-        <div id="buttons">
-            <button type="button" id="print" aria-label="Resultaten afdrukken">PRINT</button>
-            <button type="button" id="mail" aria-label="Resultaten verzenden via e-mail">MAIL</button>
-            <button type="button" id="whatsapp" aria-label="Resultaten verzenden via WhatsApp">WHATSAPP</button>
-        </div>
+<div class="container">
+  <img src="https://d2f0ora2gkri0g.cloudfront.net/12/92/1292fbc0-b827-4b5b-9326-fc529f91efb0.png" alt="MAYO" class="logo">
+  <h1 id="title">MAYO Ligbox Calculator</h1>
+  <div class="lang-bar" id="langBar">
+    <button class="lang-btn active" data-lang="nl">NL</button>
+    <button class="lang-btn" data-lang="de">DE</button>
+    <button class="lang-btn" data-lang="fr">FR</button>
+    <button class="lang-btn" data-lang="en">UK</button>
+  </div>
+  <div class="product-hero">
+    <img src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAQDAwMDAgQDAwMEBAQFBgoGBgUFBgwICQcKDgwPDg4MDQ0PERYTDxAVEQ0NExoTFRcYGRkZDxIbHRsYHRYYGRj/2wBDAQQEBAYFBgsGBgsYEA0QGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBj/wAARCAIAA5gDASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwD7+ooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKQGgBaKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiikoAWikwfWloAKTvS0UAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABQelFFACDNLRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAGKKKKAEOaWiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACijFFABRRRQAUUUUAFFFFABRRRQAUUUZoAKKKKACiiigAooooAKKKKACiiigAooooAKKKKAEZlRSzMFA7k4qo2r6UkoifUrNXJwFMy5J+ma89+L0ssf9jiORlDedkA8H7nUd685eeIRwhI90pX5lCqoJz6nipcrDSufSgIIyKK81+FOsS3Z1DT3MrJGElQvJuC5yCAOw4zXpVNO4mFFFFMAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiikFAC0UUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFAB3ooooAKKKKACiiigAooooAKK5G8+Iuh2tzNbxQ3lzLE7IwjQDBBIPUg9vSoLD4l6NcTmO+t57BSflklIZT9ccj8qV0Ox2tFICCAR0NLTEFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFRSzrGrMSAF+8x6CiaQgiND8zd/7o9a848Ya3qOqavD4V8NKHupcgsThUA+87nso/U4HU1LfRDSNbWPH+ladIYzdbmHXBxWJH8UbB5cLckfVs1d0z4OeFI4Fl1+KXXLw8vLdOwjz/sxqQAPrk+9T3/wZ+HV9AUXw7FZSY+WaxkeB1/75OPzBpcrHzGJ4oaTxtYWkllcweba7yEPG/djv2PFc74f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" alt="MAYO Hybride Flex-box">
+  </div>
+  <div class="tabs-row" style="display:flex;align-items:flex-end;gap:4px;flex-wrap:wrap;margin-bottom:12px;border-bottom:2px solid var(--border);">
+    <div class="tabs" id="tabBar" style="display:flex;flex-wrap:wrap;gap:4px;border-bottom:none;margin-bottom:0;"></div>
+    <button class="btn btn-success btn-add-tab" id="addTab" style="margin-bottom:4px;padding:6px 12px;font-size:0.85rem;"><i class="fas fa-plus"></i> <span id="addLabel">Nieuw boxdek</span></button>
+  </div>
+  <div id="tabContents"></div>
+  <div class="card">
+    <h3 id="contactTitle">Contact</h3>
+    <div class="contact-grid" id="contactFields"></div>
+  </div>
+  <div class="actions">
+    <button class="btn btn-outline" id="printBtn"><i class="fas fa-print"></i> Print</button>
+    <button class="btn btn-outline" id="mailBtn"><i class="fas fa-envelope"></i> Mail</button>
+    <button class="btn btn-outline" id="waBtn"><i class="fab fa-whatsapp"></i> WhatsApp</button>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+<script>
+const T = {
+nl: {
+  title:'MAYO Ligbox Calculator', add:'Nieuw boxdek', contact:'Contact', name:'Naam', address:'Adres', postcode:'Postcode', place:'Plaats', phone:'Tel.', email:'E-mail',
+  boxesInterest:'Interesse ligboxen', withMat:'i.c.m. matrassen', withDeep:'i.c.m. diepstrooisel', matInterest:'Interesse matrassen',
+  length:'Lengte (cm)', depth:'Diepte (cm)', leftWall:'Linker muur/wand sterk genoeg als afscheiding?', rightWall:'Rechter muur/wand sterk genoeg als afscheiding?',
+  double:'Dubbele rij?', boxW:'Gewenste ligboxbreedte', beugel:'Beugellengte', auto:'automatisch berekend',
+  yes:'Ja', no:'Nee', noBeugel:'Nee, eindig met beugel', panel:'Nee, bestel stalen eindpaneel',
+  calcBtn:'Bereken', result:'Resultaat', boxes:'Aantal ligplekken', remaining:'Restlengte', remDetail:'→ 1e en laatste box: {v} cm', spacesLabel:'ligplekken', space:'Achterkant beugel ↔ betonnen achterrand',
+  adviceLong:'MAYO adviseert langere beugel', adviceShort:'MAYO adviseert kortere beugel',
+  suggest:'Optimale breedte: {v} cm', parts:'Onderdelen', formula:'Formule: vloer(lengte / breedte) × (dubbel?2:1)',
+  posts:'Standpalen', brackets:'Beugels', head:'Kopbomen', endHead:'Kopbomen eind', wavy:'Gegolfde schoftbomen',
+  couplers:'Koppelstukken', endW:'Eindstuk schoftboom/kopboom', endHW:'Eindstuk kop/schoft', close:'Sluitplaten',
+  anchors:'Betonankers', m12:'M12x100', m10:'M10x60', caps:'Plastic caps', capB:'Kapbeugels', u:'U-bouten',
+  mattress:'MAYO matras', strip:'MAYO strip', knee:'Kniebalk', endP:'Eindpanelen',
+  invalid:'Vul lengte en diepte in om te beginnen.', phoneReq:'Telefoon verplicht', saved:'Opgeslagen', loaded:'Geladen', noData:'Geen data'
+},
+de: {
+  title:'MAYO Liegebox Rechner', add:'Neues Liegedeck', contact:'Kontakt', name:'Name', address:'Adresse', postcode:'PLZ', place:'Ort', phone:'Tel.', email:'E-Mail',
+  boxesInterest:'Interesse Liegeboxen', withMat:'i.V.m. Matratzen', withDeep:'i.V.m. Tiefstreu', matInterest:'Interesse Matratzen',
+  length:'Länge (cm)', depth:'Tiefe (cm)', leftWall:'Linke Wand stark genug als Abtrennung?', rightWall:'Rechte Wand stark genug als Abtrennung?',
+  double:'Doppelreihe?', boxW:'Gewünschte Liegeboxbreite', beugel:'Bügellänge', auto:'automatisch berechnet',
+  yes:'Ja', no:'Nein', noBeugel:'Nein, mit Bügel enden', panel:'Nein, Stahlendpaneel bestellen',
+  calcBtn:'Berechnen', result:'Ergebnis', boxes:'Anzahl Liegeplätze', remaining:'Restlänge', remDetail:'→ 1. und letzte Box: {v} cm', spacesLabel:'Liegeplätze', space:'Rückseite Bügel ↔ betonierter Hinterrand',
+  adviceLong:'Längeren Bügel empfohlen', adviceShort:'Kürzeren Bügel empfohlen',
+  suggest:'Optimale Breite: {v} cm', parts:'Teileliste', formula:'Formel: floor(Länge / Breite) × (doppelt?2:1)',
+  posts:'Pfosten', brackets:'Bügel', head:'Kopfrohre', endHead:'Kopfrohre Ende', wavy:'Gebogene Nackenrohre',
+  couplers:'Kupplungen', endW:'Endstück Nackenrohr/Kopfrohr', endHW:'Endstück Kopf/Nacken', close:'Abschlussplatten',
+  anchors:'Betonanker', m12:'M12x100', m10:'M10x60', caps:'Kunststoffkappen', capB:'Bügelkappen', u:'U-Schrauben',
+  mattress:'MAYO Matratze', strip:'MAYO Schiene', knee:'Bugbrett', endP:'Endpaneele',
+  invalid:'Länge und Tiefe eingeben um zu starten.', phoneReq:'Telefon erforderlich', saved:'Gespeichert', loaded:'Geladen', noData:'Keine Daten'
+},
+fr: {
+  title:'Calculateur logettes MAYO', add:'Nouveau plateau', contact:'Contact', name:'Nom', address:'Adresse', postcode:'Code postal', place:'Ville', phone:'Tél.', email:'E-mail',
+  boxesInterest:'Intérêt logettes', withMat:'avec matelas', withDeep:'avec litière profonde', matInterest:'Intérêt matelas',
+  length:'Longueur (cm)', depth:'Profondeur (cm)', leftWall:'Mur gauche assez solide comme séparation ?', rightWall:'Mur droit assez solide comme séparation ?',
+  double:'Double rangée ?', boxW:'Largeur de logette souhaitée', beugel:'Longueur arceau', auto:'calculé automatiquement',
+  yes:'Oui', no:'Non', noBeugel:'Non, terminer avec arceau', panel:'Non, commander panneau d\'extrémité',
+  calcBtn:'Calculer', result:'Résultat', boxes:'Nombre de places', remaining:'Longueur restante', remDetail:'→ 1re et dernière logette : {v} cm', spacesLabel:'places', space:'Arrière arceau ↔ bord béton arrière',
+  adviceLong:'Arceau plus long recommandé', adviceShort:'Arceau plus court recommandé',
+  suggest:'Largeur optimale : {v} cm', parts:'Liste des pièces', formula:'Formule : floor(longueur / largeur) × (double?2:1)',
+  posts:'Poteaux', brackets:'Arceaux', head:'Poutres de tête', endHead:'Poutres fin', wavy:'Poutres d\'épaule ondulées',
+  couplers:'Accouplements', endW:'Pièce d\'extrémité arceau/tête', endHW:'Pièce fin tête/épaule', close:'Plaques de fermeture',
+  anchors:'Ancrages béton', m12:'M12x100', m10:'M10x60', caps:'Capuchons plastique', capB:'Capuchons arceaux', u:'Boulons U',
+  mattress:'Matelas MAYO', strip:'Bande MAYO', knee:'Barre de genou', endP:'Panneaux d\'extrémité',
+  invalid:'Saisissez longueur et profondeur pour commencer.', phoneReq:'Téléphone requis', saved:'Enregistré', loaded:'Chargé', noData:'Pas de données'
+},
+en: {
+  title:'MAYO Cubicle Calculator', add:'New cubicle deck', contact:'Contact', name:'Name', address:'Address', postcode:'Postcode', place:'City', phone:'Tel.', email:'Email',
+  boxesInterest:'Interest in cubicles', withMat:'with mattresses', withDeep:'with deep bedding', matInterest:'Interest in mattresses',
+  length:'Length (cm)', depth:'Depth (cm)', leftWall:'Left wall strong enough as partition?', rightWall:'Right wall strong enough as partition?',
+  double:'Double row?', boxW:'Desired cubicle width', beugel:'Loop length', auto:'auto-calculated',
+  yes:'Yes', no:'No', noBeugel:'No, end with loop', panel:'No, order steel end panel',
+  calcBtn:'Calculate', result:'Result', boxes:'Number of cubicles', remaining:'Remaining length', remDetail:'→ first and last cubicle will be {v} cm', spacesLabel:'spaces', space:'Back of loop ↔ concrete rear edge',
+  adviceLong:'Longer loop recommended', adviceShort:'Shorter loop recommended',
+  suggest:'Optimal width: {v} cm', parts:'Parts list', formula:'Formula: floor(length / width) × (double?2:1)',
+  posts:'Posts', brackets:'Loops', head:'Midrails', endHead:'End midrails', wavy:'Zigzag neckrails',
+  couplers:'Joiners', endW:'End piece neckrail/headrail', endHW:'Endpiece wall', close:'Backplates',
+  anchors:'Concrete anchors', m12:'M12x100', m10:'M10x60', caps:'Plastic caps', capB:'Zigzag clamps', u:'U-bolts',
+  mattress:'MAYO mattress', strip:'MAYO strip', knee:'Brisket board', endP:'End panels',
+  invalid:'Enter length and depth to get started.', phoneReq:'Phone required', saved:'Saved', loaded:'Loaded', noData:'No data'
+}
+};
+let lang = 'nl', tabs = {}, active = null, counter = 0;
+const boxWidths = [110,112.5,115,117.5,120,122.5,125];
+const beugelOpts = [175,183,198,206,213];
+
+function t(k){ return T[lang][k] || k; }
+function toast(msg){ const el=document.getElementById('toast'); el.textContent=msg; el.classList.add('show'); setTimeout(()=>el.classList.remove('show'),2000); }
+
+function createForm(id){
+  const d = tabs[id] || {};
+  return `
+  <div class="card tab-content" id="content-${id}" style="display:${id===active?'block':'none'}">
+    <div class="form-grid">
+      <div><label>${t('length')}</label><input type="number" id="len-${id}" min="1" value="${d.len||''}" placeholder="0"></div>
+      <div><label>${t('depth')}</label><input type="number" id="dep-${id}" min="1" value="${d.dep||''}" placeholder="0"></div>
+      <div><label>${t('leftWall')}</label>
+        <select id="lw-${id}">
+          <option value="yes" ${d.lw==='yes'?'selected':''}>${t('yes')}</option>
+          <option value="no" ${d.lw==='no'?'selected':''}>${t('noBeugel')}</option>
+          ${lang==='nl'?`<option value="panel" ${d.lw==='panel'?'selected':''}>${t('panel')}</option>`:''}
+        </select></div>
+      <div><label>${t('rightWall')}</label>
+        <select id="rw-${id}">
+          <option value="yes" ${d.rw==='yes'?'selected':''}>${t('yes')}</option>
+          <option value="no" ${d.rw==='no'?'selected':''}>${t('noBeugel')}</option>
+          ${lang==='nl'?`<option value="panel" ${d.rw==='panel'?'selected':''}>${t('panel')}</option>`:''}
+        </select></div>
+      <div><label>${t('double')}</label>
+        <select id="dbl-${id}"><option value="no" ${d.dbl!=='yes'?'selected':''}>${t('no')}</option><option value="yes" ${d.dbl==='yes'?'selected':''}>${t('yes')}</option></select></div>
+      <div><label>${t('boxW')}</label>
+        <select id="bw-${id}">${boxWidths.map(v=>`<option value="${v}" ${d.bw==v?'selected':''}>${v} cm</option>`).join('')}</select></div>
+      <div class="full"><label>${t('beugel')} <span class="hint">(${t('auto')})</span></label>
+        <select id="bg-${id}">${beugelOpts.map(v=>`<option value="${v}" ${d.bg==v?'selected':''}>${v} cm</option>`).join('')}</select>
+        <button type="button" class="calc-btn" id="calcbtn-${id}" style="margin-top:10px;width:100%;padding:12px;background:var(--primary);color:#fff;border:none;border-radius:6px;font-size:1rem;font-weight:600;cursor:pointer;">${t('calcBtn')}</button>
+      </div>
     </div>
-    <script>
-        let currentLanguage = 'nl', tabCounter = 0, activeTab = null, tabData = {};
-        const defaultTranslations = {
-            pageTitle: 'MAYO Ligbox Calculator',
-            mainTitle: 'MAYO Ligbox Calculator',
-            addTab: 'VOEG NIEUW BOXDEK TOE',
-            addTabAria: 'Voeg nieuw boxdek toe',
-            tabLabel: 'Boxdek',
-            tabNamePrompt: 'Voer een naam in voor het nieuwe boxdek (of laat leeg voor standaardnaam):',
-            removeTabAria: 'Verwijder boxdek',
-            lengthLabel: 'Lengte in cm:', lengthPlaceholder: 'Voorbeeld: 2000', lengthAria: 'Voer de lengte in cm in',
-            widthLabel: 'Diepte in cm:', widthPlaceholder: 'Voorbeeld: 300', widthAria: 'Voer de diepte in cm in',
-            leftWallLabel: 'Is er links een muur/wand sterk genoeg als afscheiding?', leftWallAria: 'Is linker muur/wand sterk genoeg?',
-            leftWallOptions: { yes: 'Ja', no: 'Nee, ik wil met een boxbeugel eindigen', panel: 'Nee, ik wil een stalen eindpaneel bestellen' },
-            rightWallLabel: 'Is er rechts een muur/wand sterk genoeg als afscheiding?', rightWallAria: 'Is rechter muur/wand sterk genoeg?',
-            rightWallOptions: { yes: 'Ja', no: 'Nee, ik wil met een boxbeugel eindigen', panel: 'Nee, ik wil een stalen eindpaneel bestellen' },
-            doubleRowLabel: 'Betreft het een dubbele rij?', doubleRowAria: 'Betreft het een dubbele rij?',
-            boxWidthLabel: 'Gewenste ligboxbreedte:', boxWidthAria: 'Selecteer de gewenste ligboxbreedte',
-            beugelLengthLabel: 'Beugel lengte:', beugelLengthAria: 'Selecteer de beugellengte',
-            autoCalculated: '(wordt automatisch berekend maar kan handmatig worden aangepast)',
-            calculateButton: 'BEREKEN', calculateButtonAria: 'Bereken resultaten',
-            contactTitle: 'Contactinformatie',
-            nameLabel: 'Naam:', namePlaceholder: 'Voer uw naam in', nameAria: 'Voer uw naam in',
-            addressLabel: 'Straat + Huisnummer:', addressPlaceholder: 'Voer uw adres in', addressAria: 'Voer uw adres in',
-            postcodeLabel: 'Postcode:', postcodePlaceholder: 'Voer uw postcode in', postcodeAria: 'Voer uw postcode in',
-            placeLabel: 'Plaats:', placePlaceholder: 'Voer uw plaats in', placeAria: 'Voer uw plaats in',
-            phoneLabel: 'Tel.:', phonePlaceholder: 'Voer uw telefoonnummer in', phoneAria: 'Voer uw telefoonnummer in',
-            emailLabel: 'Mail:', emailPlaceholder: 'Voer uw e-mailadres in', emailAria: 'Voer uw e-mailadres in',
-            interestBoxesLabel: 'Interesse in ligboxen:', interestBoxesAria: 'Interesse in ligboxen',
-            interestMattressesLabel: 'Interesse in matrassen:', interestMattressesAria: 'Interesse in matrassen',
-            printButton: 'PRINT', printButtonAria: 'Resultaten afdrukken',
-            mailButton: 'MAIL', mailButtonAria: 'Resultaten verzenden via e-mail',
-            whatsappButton: 'WHATSAPP', whatsappButtonAria: 'Resultaten verzenden via WhatsApp',
-            yes: 'Ja', no: 'Nee',
-            invalidInput: '⚠️ Voer geldige getallen in voor alle velden die groter zijn dan 0.',
-            noTabs: 'Maak eerst een boxdek aan.',
-            invalidResults: '⚠️ Bereken eerst geldige resultaten voor het huidige tabblad voordat u verzendt via e-mail of WhatsApp.',
-            phoneRequired: '⚠️ Vul uw telefoonnummer in voordat u verzendt.',
-            emailError: '⚠️ Kon de e-mailclient niet openen. Kopieer de onderstaande tekst handmatig naar Rob@moduulbouw.nl of gebruik de kopieerknop.',
-            whatsappError: '⚠️ Kon WhatsApp niet openen. Kopieer de onderstaande tekst naar WhatsApp (nummer: {phoneNumber}) of gebruik de kopieerknop:',
-            lastTabError: 'Kan het laatste boxdek niet verwijderen. Er moet minimaal één boxdek blijven.',
-            confirmRemove: 'Weet je zeker dat je boxdek "{tabName}" wilt verwijderen?',
-            bodyTruncated: '⚠️ De resultaten zijn ingekort vanwege de tekenslimiet. Kopieer de volledige tekst hieronder of gebruik de kopieerknop.',
-            copySuccess: 'Resultaten gekopieerd naar klembord!',
-            copyError: 'Kon niet kopiëren, kopieer handmatig.',
-            copyTextAria: 'Resultaten om te kopiëren',
-            sentToMayo: 'Verzonden naar MAYO',
-            emailSentIconAlt: 'E-mail verzonden icoon',
-            whatsappSentIconAlt: 'WhatsApp verzonden icoon',
-            result: {
-                length: 'Ingevulde lengte: {value} cm',
-                width: 'Ingevulde diepte: {value} cm',
-                boxes: 'Aantal ligplekken: {value}',
-                remainingLength: 'Overblijvende lengte: {value} cm',
-                selectedBoxWidth: 'Gekozen ligboxbreedte: {value} cm',
-                beugelLength: 'Gekozen beugel lengte: {value} cm',
-                spaceBehind: 'Ruimte achter beugel: {value} cm',
-                longBracketAdvice: '⚠️ MAYO adviseert een <b>langere beugel</b>!',
-                shortBracketAdvice: '⚠️ MAYO adviseert een <b>kortere beugel</b>!',
-                suggestion: 'Suggestie voor <b>optimale ligboxbreedte</b>: <b>{value} cm</b>',
-                partsList: 'Onderdelenlijst:',
-                posts: 'Standpalen: {value}',
-                brackets: 'Beugels: {value}',
-                headBoards: 'Kopbomen: {value}',
-                endHeadBoards: 'Kopbomen eind: {value}',
-                wavyWithers: 'Aantal gegolfde schoftbomen: {value}',
-                couplers: 'Aantal koppelstuk: {value}',
-                endPiecesWithers: 'Aantal eindstuk schoftboom: {value}',
-                endPiecesHeadWithers: 'Aantal eindstuk kopboom/schoftboom: {value}',
-                closingPlates: 'Sluitplaten: {value}',
-                concreteAnchors: 'Betonankers: {value}',
-                m12x100: 'M12x100 bouten: {value}',
-                m10x60: 'M10x60 bouten: {value}',
-                plasticCaps: 'Plastic caps: {value}',
-                capBrackets: 'Kapbeugels: {value}',
-                uBolts: 'U-bouten: {value}',
-                mayoMattress: 'MAYO matras: {value}',
-                mayoStrip: 'MAYO strip: {value}',
-                kneeRails: 'MAYO kniebalk: {value}',
-                endPanels: 'Stalen eindpanelen: {value}',
-                emailSubject: 'Koeien Ligbox Calculator Resultaten',
-                whatsappTitle: 'Koeien Ligbox Calculator Resultaten'
-            }
-        };
-        const translations = {
-            nl: defaultTranslations,
-            de: {
-                ...defaultTranslations,
-                pageTitle: 'MAYO Kuh Kalkulator', mainTitle: 'MAYO Kuh Kalkulator',
-                addTab: 'NEUES LIEGEDECK HINZUFÜGEN', addTabAria: 'Neues Liegedeck hinzufügen',
-                tabLabel: 'Liegedeck', tabNamePrompt: 'Geben Sie einen Namen für das neue Liegedeck ein (oder lassen Sie es leer für den Standardnamen):',
-                removeTabAria: 'Liegedeck entfernen', lengthLabel: 'Länge in cm:', widthLabel: 'Tiefe in cm:',
-                leftWallLabel: 'Gibt es links eine starke Wand/Trennwand als Abgrenzung?', leftWallAria: 'Ist die linke Wand/Trennwand stark genug?',
-                leftWallOptions: { yes: 'Ja', no: 'Nein, ich möchte mit einer Boxbügel enden' },
-                rightWallLabel: 'Gibt es rechts eine starke Wand/Trennwand als Abgrenzung?', rightWallAria: 'Ist die rechte Wand/Trennwand stark genug?',
-                rightWallOptions: { yes: 'Ja', no: 'Nein, ich möchte mit einer Boxbügel enden' },
-                doubleRowLabel: 'Ist das eine Doppelreihe?', doubleRowAria: 'Ist das eine Doppelreihe?',
-                boxWidthLabel: 'Gewünschte Liegeboxbreite:', boxWidthAria: 'Wählen Sie die gewünschte Liegeboxbreite',
-                beugelLengthLabel: 'Bügel-Länge:', beugelLengthAria: 'Wählen Sie die Bügel-Länge',
-                autoCalculated: '(wird automatisch berechnet, kann aber manuell angepasst werden)',
-                calculateButton: 'BERECHNEN', calculateButtonAria: 'Ergebnisse berechnen',
-                contactTitle: 'Kontaktinformationen',
-                nameLabel: 'Name:', namePlaceholder: 'Geben Sie Ihren Namen ein', nameAria: 'Geben Sie Ihren Namen ein',
-                addressLabel: 'Straße + Hausnummer:', addressPlaceholder: 'Geben Sie Ihre Adresse ein', addressAria: 'Geben Sie Ihre Adresse ein',
-                postcodeLabel: 'Postleitzahl:', postcodePlaceholder: 'Geben Sie Ihre Postleitzahl ein', postcodeAria: 'Geben Sie Ihre Postleitzahl ein',
-                placeLabel: 'Ort:', placePlaceholder: 'Geben Sie Ihren Ort ein', placeAria: 'Geben Sie Ihren Ort ein',
-                phoneLabel: 'Tel.:', phonePlaceholder: 'Geben Sie Ihre Telefonnummer ein', phoneAria: 'Geben Sie Ihre Telefonnummer ein',
-                emailLabel: 'E-Mail:', emailPlaceholder: 'Geben Sie Ihre E-Mail-Adresse ein', emailAria: 'Geben Sie Ihre E-Mail-Adresse ein',
-                interestBoxesLabel: 'Interesse an Liegeboxen:', interestBoxesAria: 'Interesse an Liegeboxen',
-                interestMattressesLabel: 'Interesse an Matratzen:', interestMattressesAria: 'Interesse an Matratzen',
-                printButton: 'DRUCKEN', printButtonAria: 'Ergebnisse drucken',
-                mailButton: 'E-MAIL', mailButtonAria: 'Ergebnisse per E-Mail senden',
-                whatsappButton: 'WHATSAPP', whatsappButtonAria: 'Ergebnisse über WhatsApp senden',
-                yes: 'Ja', no: 'Nein',
-                invalidInput: '⚠️ Geben Sie gültige Zahlen für alle Felder ein, die größer als 0 sind.',
-                noTabs: 'Erstellen Sie zuerst ein Liegedeck.',
-                invalidResults: '⚠️ Berechnen Sie zuerst gültige Ergebnisse für das aktuelle Liegedeck, bevor Sie per E-Mail oder WhatsApp senden.',
-                phoneRequired: '⚠️ Geben Sie Ihre Telefonnummer ein, bevor Sie senden.',
-                emailError: '⚠️ E-Mail-Client konnte nicht geöffnet werden. Kopieren Sie den Text unten manuell nach Rob@moduulbouw.nl oder verwenden Sie die Kopiertaste.',
-                whatsappError: '⚠️ WhatsApp konnte nicht geöffnet werden. Kopieren Sie den Text unten nach WhatsApp (Nummer: {phoneNumber}) oder verwenden Sie die Kopiertaste:',
-                lastTabError: 'Das letzte Liegedeck kann nicht entfernt werden. Es muss mindestens ein Liegedeck bleiben.',
-                confirmRemove: 'Sind Sie sicher, dass Sie Liegedeck "{tabName}" entfernen möchten?',
-                bodyTruncated: '⚠️ Die Ergebnisse wurden aufgrund der Zeichenbegrenzung gekürzt. Kopieren Sie den vollständigen Text unten oder verwenden Sie die Kopierschaltfläche.',
-                copySuccess: 'Ergebnisse in die Zwischenablage kopiert!',
-                copyError: 'Konnte nicht kopiert werden, bitte manuell kopieren.',
-                copyTextAria: 'Ergebnisse zum Kopieren',
-                sentToMayo: 'An MAYO gesendet',
-                emailSentIconAlt: 'E-Mail gesendet Symbol',
-                whatsappSentIconAlt: 'WhatsApp gesendet Symbol',
-                result: {
-                    ...defaultTranslations.result,
-                    length: 'Eingegebene Länge: {value} cm',
-                    width: 'Eingegebene Tiefe: {value} cm',
-                    boxes: 'Anzahl Liegeplätze: {value}',
-                    remainingLength: 'Verbleibende Länge: {value} cm',
-                    selectedBoxWidth: 'Gewählte Liegeboxbreite: {value} cm',
-                    beugelLength: 'Gewählte Bügel-Länge: {value} cm',
-                    spaceBehind: 'Raum hinter Bügel: {value} cm',
-                    longBracketAdvice: '⚠️ MAYO empfiehlt einen <b>längeren Bügel</b>!',
-                    shortBracketAdvice: '⚠️ MAYO empfiehlt einen <b>kürzeren Bügel</b>!',
-                    suggestion: 'Vorschlag für <b>optimale Liegeboxbreite</b>: <b>{value} cm</b>',
-                    partsList: 'Teileliste:',
-                    posts: 'Pfosten: {value}',
-                    brackets: 'Flexbügel: {value}',
-                    headBoards: 'Kopfrohre: {value}',
-                    endHeadBoards: 'Kopfrohre Ende: {value}',
-                    wavyWithers: 'Anzahl Gebogen Näckrohre: {value}',
-                    couplers: 'Anzahl Kupplungen: {value}',
-                    endPiecesWithers: 'Anzahl Endstücke Näckenrohre: {value}',
-                    endPiecesHeadWithers: 'Anzahl Wand Endstücke: {value}',
-                    closingPlates: 'Abschlussplatten: {value}',
-                    concreteAnchors: 'Betonanker: {value}',
-                    m12x100: 'M12x100 Schrauben: {value}',
-                    m10x60: 'M10x60 Schrauben: {value}',
-                    plasticCaps: 'Kunststoffkappen: {value}',
-                    capBrackets: 'Bügelkappen: {value}',
-                    uBolts: 'U-Schrauben: {value}',
-                    mayoMattress: 'MAYO Matratze: {value}',
-                    mayoStrip: 'MAYO Schienen: {value}',
-                    kneeRails: 'MAYO Bugbretten: {value}',
-                    emailSubject: 'Kuh-Liegebox-Rechner Ergebnisse',
-                    whatsappTitle: 'Kuh-Liegebox-Rechner Ergebnisse'
-                }
-            },
-            fr: {
-                ...defaultTranslations,
-                pageTitle: 'Calculateur de logettes MAYO', mainTitle: 'Calculateur de logettes MAYO',
-                addTab: 'AJOUTER UN NOUVEAU PLATEAU', addTabAria: 'Ajouter un nouveau plateau',
-                tabLabel: 'Plateau', tabNamePrompt: 'Entrez un nom pour le nouveau plateau (ou laissez vide pour le nom par défaut) :',
-                removeTabAria: 'Supprimer le plateau', lengthLabel: 'Longueur en cm :', lengthPlaceholder: 'Exemple : 2000', lengthAria: 'Entrez la longueur en cm',
-                widthLabel: 'Profondeur en cm :', widthPlaceholder: 'Exemple : 300', widthAria: 'Entrez la profondeur en cm',
-                leftWallLabel: 'Y a-t-il un mur/sépartition suffisamment solide à gauche ?', leftWallAria: 'Le mur/sépartition à gauche est-il suffisamment solide ?',
-                leftWallOptions: { yes: 'Oui', no: 'Non, je souhaite terminer avec un arceau de box' },
-                rightWallLabel: 'Y a-t-il un mur/sépartition suffisamment solide à droite ?', rightWallAria: 'Le mur/sépartition à droite est-il suffisamment solide ?',
-                rightWallOptions: { yes: 'Oui', no: 'Non, je souhaite terminer avec un arceau de box' },
-                doubleRowLabel: 'S\'agit-il d\'une double rangée ?', doubleRowAria: 'S\'agit-il d\'une double rangée ?',
-                boxWidthLabel: 'Largeur de logette souhaitée :', boxWidthAria: 'Sélectionnez la largeur de logette souhaitée',
-                beugelLengthLabel: 'Longueur de l\'arceau :', beugelLengthAria: 'Sélectionnez la longueur de l\'arceau',
-                autoCalculated: '(calculé automatiquement mais peut être ajusté manuellement)',
-                calculateButton: 'CALCULER', calculateButtonAria: 'Calculer les résultats',
-                contactTitle: 'Informations de contact',
-                nameLabel: 'Nom :', namePlaceholder: 'Entrez votre nom', nameAria: 'Entrez votre nom',
-                addressLabel: 'Rue + Numéro :', addressPlaceholder: 'Entrez votre adresse', addressAria: 'Entrez votre adresse',
-                postcodeLabel: 'Code postal :', postcodePlaceholder: 'Entrez votre code postal', postcodeAria: 'Entrez votre code postal',
-                placeLabel: 'Ville :', placePlaceholder: 'Entrez votre ville', placeAria: 'Entrez votre ville',
-                phoneLabel: 'Tél. :', phonePlaceholder: 'Entrez votre numéro de téléphone', phoneAria: 'Entrez votre numéro de téléphone',
-                emailLabel: 'E-mail :', emailPlaceholder: 'Entrez votre adresse e-mail', emailAria: 'Entrez votre adresse e-mail',
-                interestBoxesLabel: 'Intérêt pour les logettes :', interestBoxesAria: 'Intérêt pour les logettes',
-                interestMattressesLabel: 'Intérêt pour les matelas :', interestMattressesAria: 'Intérêt pour les matelas',
-                printButton: 'IMPRIMER', printButtonAria: 'Imprimer les résultats',
-                mailButton: 'E-MAIL', mailButtonAria: 'Envoyer les résultats par e-mail',
-                whatsappButton: 'WHATSAPP', whatsappButtonAria: 'Envoyer les résultats via WhatsApp',
-                yes: 'Oui', no: 'Non',
-                invalidInput: '⚠️ Entrez des nombres valides pour tous les champs supérieurs à 0.',
-                noTabs: 'Créez d\'abord un plateau.',
-                invalidResults: '⚠️ Calculez d\'abord des résultats valides pour le plateau actuel avant d\'envoyer par e-mail ou WhatsApp.',
-                phoneRequired: '⚠️ Entrez votre numéro de téléphone avant d\'envoyer.',
-                emailError: '⚠️ Impossible d\'ouvrir le client e-mail. Copiez le texte ci-dessous manuellement à Rob@moduulbouw.nl ou utilisez le bouton de copie.',
-                whatsappError: '⚠️ Impossible d\'ouvrir WhatsApp. Copiez le texte ci-dessous vers WhatsApp (numéro : {phoneNumber}) ou utilisez le bouton de copie :',
-                lastTabError: 'Impossible de supprimer le dernier plateau. Il doit rester au moins un plateau.',
-                confirmRemove: 'Êtes-vous sûr de vouloir supprimer le plateau "{tabName}" ?',
-                bodyTruncated: '⚠️ Les résultats ont été tronqués en raison de la limite de caractères. Copiez le texte complet ci-dessous ou utilisez le bouton de copie.',
-                copySuccess: 'Résultats copiés dans le presse-papiers !',
-                copyError: 'Impossible de copier, veuillez copier manuellement.',
-                copyTextAria: 'Résultats à copier',
-                sentToMayo: 'Envoyé à MAYO',
-                emailSentIconAlt: 'Icône d\'e-mail envoyé',
-                whatsappSentIconAlt: 'Icône WhatsApp envoyé',
-                result: {
-                    ...defaultTranslations.result,
-                    length: 'Longueur saisie: {value} cm',
-                    width: 'Profondeur saisie: {value} cm',
-                    boxes: 'Nombre de places de couchage: {value}',
-                    remainingLength: 'Longueur restante: {value} cm',
-                    selectedBoxWidth: 'Largeur de logette choisie: {value} cm',
-                    beugelLength: 'Longueur d’arceau choisie: {value} cm',
-                    spaceBehind: 'Espace derrière l’arceau: {value} cm',
-                    longBracketAdvice: '⚠️ MAYO recommande un <b>arceau plus long</b>!',
-                    shortBracketAdvice: '⚠️ MAYO recommande un <b>arceau plus court</b>!',
-                    suggestion: 'Suggestion pour <b>largeur optimale de logette</b>: <b>{value} cm</b>',
-                    partsList: 'Liste des pièces:',
-                    posts: 'Poteaux : {value}',
-                    brackets: 'Arceaux : {value}',
-                    headBoards: 'Poutres de tête : {value}',
-                    endHeadBoards: 'Poutres de tête de fin : {value}',
-                    wavyWithers: 'Nombre de poutres d\'épaule ondulées : {value}',
-                    couplers: 'Nombre de pièces de couplage : {value}',
-                    endPiecesWithers: 'Nombre de pièces de fin pour poutres d\'épaule : {value}',
-                    endPiecesHeadWithers: 'Nombre de pièces de fin pour poutres de tête/épaule : {value}',
-                    closingPlates: 'Plaques de fermeture : {value}',
-                    concreteAnchors: 'Ancrages béton : {value}',
-                    m12x100: 'Boulons M12x100 : {value}',
-                    m10x60: 'Boulons M10x60 : {value}',
-                    plasticCaps: 'Capuchons en plastique : {value}',
-                    capBrackets: 'Capuchons d\'arceaux : {value}',
-                    uBolts: 'Boulons en U : {value}',
-                    mayoMattress: 'Matelas MAYO : {value}',
-                    mayoStrip: 'Bande MAYO : {value}',
-                    kneeRails: 'Barre de genou MAYO : {value}',
-                    emailSubject: 'Résultats du calculateur de logettes pour vaches',
-                    whatsappTitle: 'Résultats du calculateur de logettes pour vaches'
-                }
-            },
-            en: {
-                ...defaultTranslations,
-                pageTitle: 'MAYO Cubicle Calculator', mainTitle: 'MAYO Cubicle Calculator',
-                addTab: 'ADD NEW CUBICLE DECK', addTabAria: 'Add new cubicle deck',
-                tabLabel: 'Cubicle Deck', tabNamePrompt: 'Enter a name for the new cubicle deck (or leave empty for default name):',
-                removeTabAria: 'Remove cubicle deck', lengthLabel: 'Length in cm:', lengthPlaceholder: 'Example: 2000', lengthAria: 'Enter the length in cm',
-                widthLabel: 'Depth in cm:', widthPlaceholder: 'Example: 300', widthAria: 'Enter the depth in cm',
-                leftWallLabel: 'Is there a strong enough wall/partition on the left?', leftWallAria: 'Is the left wall/partition strong enough?',
-                leftWallOptions: { yes: 'Yes', no: 'No, I want to end with a loop' },
-                rightWallLabel: 'Is there a strong enough wall/partition on the right?', rightWallAria: 'Is the right wall/partition strong enough?',
-                rightWallOptions: { yes: 'Yes', no: 'No, I want to end with a loop' },
-                doubleRowLabel: 'Is it a double row?', doubleRowAria: 'Is it a double row?',
-                boxWidthLabel: 'Desired cubicle width:', boxWidthAria: 'Select the desired cubicle width',
-                beugelLengthLabel: 'Bracket length:', beugelLengthAria: 'Select the bracket length',
-                autoCalculated: '(automatically calculated but can be manually adjusted)',
-                calculateButton: 'CALCULATE', calculateButtonAria: 'Calculate results',
-                contactTitle: 'Contact Information',
-                nameLabel: 'Name:', namePlaceholder: 'Enter your name', nameAria: 'Enter your name',
-                addressLabel: 'Street + House Number:', addressPlaceholder: 'Enter your address', addressAria: 'Enter your address',
-                postcodeLabel: 'Postcode:', postcodePlaceholder: 'Enter your postcode', postcodeAria: 'Enter your postcode',
-                placeLabel: 'City:', placePlaceholder: 'Enter your city', placeAria: 'Enter your city',
-                phoneLabel: 'Tel.:', phonePlaceholder: 'Enter your phone number', phoneAria: 'Enter your phone number',
-                emailLabel: 'Email:', emailPlaceholder: 'Enter your email address', emailAria: 'Enter your email address',
-                interestBoxesLabel: 'Interest in cubicles:', interestBoxesAria: 'Interest in cubicles',
-                interestMattressesLabel: 'Interest in mattresses:', interestMattressesAria: 'Interest in mattresses',
-                printButton: 'PRINT', printButtonAria: 'Print results',
-                mailButton: 'EMAIL', mailButtonAria: 'Send results via email',
-                whatsappButton: 'WHATSAPP', whatsappButtonAria: 'Send results via WhatsApp',
-                yes: 'Yes', no: 'No',
-                invalidInput: '⚠️ Enter valid numbers for all fields greater than 0.',
-                noTabs: 'Create a cubicle deck first.',
-                invalidResults: '⚠️ Calculate valid results for the current cubicle deck before sending via email or WhatsApp.',
-                phoneRequired: '⚠️ Enter your phone number before sending.',
-                emailError: '⚠️ Could not open the email client. Copy the text below manually to Rob@moduulbouw.nl or use the copy button.',
-                whatsappError: '⚠️ Could not open WhatsApp. Copy the text below to WhatsApp (number: {phoneNumber}) or use the copy button:',
-                lastTabError: 'Cannot remove the last cubicle deck. At least one cubicle deck must remain.',
-                confirmRemove: 'Are you sure you want to remove cubicle deck "{tabName}"?',
-                bodyTruncated: '⚠️ The results have been truncated due to the character limit. Copy the full text below or use the copy button.',
-                copySuccess: 'Results copied to clipboard!',
-                copyError: 'Could not copy, please copy manually.',
-                copyTextAria: 'Results to copy',
-                sentToMayo: 'Sent to MAYO',
-                emailSentIconAlt: 'Email sent icon',
-                whatsappSentIconAlt: 'WhatsApp sent icon',
-                result: {
-                    ...defaultTranslations.result,
-                    length: 'Entered length: {value} cm',
-                    width: 'Entered depth: {value} cm',
-                    boxes: 'Number of cubicles: {value}',
-                    remainingLength: 'Remaining length: {value} cm',
-                    selectedBoxWidth: 'Selected cubicle width: {value} cm',
-                    beugelLength: 'Selected loop length: {value} cm',
-                    spaceBehind: 'Space behind loop: {value} cm',
-                    longBracketAdvice: '⚠️ MAYO recommends a <b>longer loop</b>!',
-                    shortBracketAdvice: '⚠️ MAYO recommends a <b>shorter loop</b>!',
-                    suggestion: 'Suggestion for <b>optimal cubicle width</b>: <b>{value} cm</b>',
-                    partsList: 'Parts list:',
-                    posts: 'Posts: {value}',
-                    brackets: 'Loops: {value}',
-                    headBoards: 'Midrails: {value}',
-                    endHeadBoards: 'End midrails: {value}',
-                    wavyWithers: 'Number of zigzag neckrails: {value}',
-                    couplers: 'Number of joiners: {value}',
-                    endPiecesWithers: 'Number of end pieces for zigzags: {value}',
-                    endPiecesHeadWithers: 'Endpiece wall: {value}',
-                    closingPlates: 'Backplates: {value}',
-                    concreteAnchors: 'Concrete anchors: {value}',
-                    m12x100: 'M12x100 bolts: {value}',
-                    m10x60: 'M10x60 bolts: {value}',
-                    plasticCaps: 'Plastic caps: {value}',
-                    capBrackets: 'Zigzag clamps: {value}',
-                    uBolts: 'U-bolts: {value}',
-                    mayoMattress: 'MAYO mattress: {value}',
-                    mayoStrip: 'MAYO strip: {value}',
-                    kneeRails: 'MAYO Brisketboard: {value}',
-                    emailSubject: 'Cow Cubicle Calculator Results',
-                    whatsappTitle: 'Cow Cubicle Calculator Results'
-                }
-            }
-        };
-        const elements = {
-            pageTitle: document.getElementById('pageTitle'),
-            mainTitle: document.getElementById('mainTitle'),
-            addTab: document.getElementById('addTab'),
-            tabBar: document.getElementById('tabBar'),
-            tabContents: document.getElementById('tabContents'),
-            contactInfo: document.getElementById('contact-info'),
-            print: document.getElementById('print'),
-            mail: document.getElementById('mail'),
-            whatsapp: document.getElementById('whatsapp')
-        };
-        function updateLanguage(lang) {
-            const contactValues = {
-                name: document.getElementById('name')?.value || '',
-                address: document.getElementById('address')?.value || '',
-                postcode: document.getElementById('postcode')?.value || '',
-                place: document.getElementById('place')?.value || '',
-                phone: document.getElementById('phone')?.value || '',
-                email: document.getElementById('email')?.value || '',
-                interestBoxes: document.getElementById('interestBoxes')?.checked || false,
-                interestMattresses: document.getElementById('interestMattresses')?.checked || false
-            };
-            const tabValues = Object.fromEntries(Object.entries(tabData).map(([tabId, data]) => [tabId, {
-                tabName: data.tabName,
-                length: document.getElementById(`length-${tabId}`)?.value || '',
-                width: document.getElementById(`width-${tabId}`)?.value || '',
-                boxWidth: document.getElementById(`boxWidth-${tabId}`)?.value || '',
-                leftWall: document.getElementById(`leftWall-${tabId}`)?.value || '',
-                rightWall: document.getElementById(`rightWall-${tabId}`)?.value || '',
-                doubleRow: document.getElementById(`doubleRow-${tabId}`)?.value || '',
-                beugelLength: document.getElementById(`beugelLength-${tabId}`)?.value || '',
-                isBeugelLengthManuallySet: data.isBeugelLengthManuallySet,
-                isValid: data.isValid,
-                isSentByEmail: data.isSentByEmail || false,
-                isSentByWhatsApp: data.isSentByWhatsApp || false,
-                parts: data.parts || {}
-            }]));
-            currentLanguage = lang;
-            document.querySelectorAll('.language-button').forEach(button => button.classList.toggle('active', button.dataset.lang === lang));
-            document.documentElement.lang = lang === 'en' ? 'en' : lang;
-            const t = translations[lang];
-            elements.pageTitle.textContent = t.pageTitle;
-            elements.mainTitle.textContent = t.mainTitle;
-            elements.addTab.textContent = t.addTab;
-            elements.addTab.setAttribute('aria-label', t.addTabAria);
-            elements.tabBar.innerHTML = '';
-            elements.tabContents.innerHTML = '';
-            Object.entries(tabValues).forEach(([tabId, data]) => {
-                const tabName = data.tabName || `${t.tabLabel} ${tabId.split('-')[1]}`;
-                const tab = document.createElement('div');
-                tab.className = `tab ${tabId === activeTab ? 'active' : ''}`;
-                tab.id = tabId;
-                tab.innerHTML = `${tabName}<span class="remove-tab" id="remove-${tabId}" aria-label="${t.removeTabAria} ${tabName}">&times;</span>`;
-                elements.tabBar.appendChild(tab);
-                tab.addEventListener('click', e => !e.target.classList.contains('remove-tab') && switchTab(tabId));
-                tab.querySelector(`#remove-${tabId}`).addEventListener('click', () => removeTab(tabId));
-                const tabContent = document.createElement('div');
-                tabContent.className = `tab-content ${tabId === activeTab ? 'active' : ''}`;
-                tabContent.id = `content-${tabId}`;
-                tabContent.innerHTML = createTabForm(tabId, t, data);
-                elements.tabContents.appendChild(tabContent);
-                document.getElementById(`calculate-${tabId}`).addEventListener('click', () => calculate(tabId));
-                document.getElementById(`beugelLength-${tabId}`).addEventListener('change', () => tabData[tabId].isBeugelLengthManuallySet = true);
-                if (data.isValid) calculate(tabId);
-            });
-            elements.contactInfo.innerHTML = `
-                <h2 id="contactTitle">${t.contactTitle}</h2>
-                <div class="input-group">
-                    <label for="name" id="nameLabel">${t.nameLabel}</label>
-                    <input type="text" id="name" placeholder="${t.namePlaceholder}" aria-label="${t.nameAria}" value="${contactValues.name}">
-                </div>
-                <div class="input-group">
-                    <label for="address" id="addressLabel">${t.addressLabel}</label>
-                    <input type="text" id="address" placeholder="${t.addressPlaceholder}" aria-label="${t.addressAria}" value="${contactValues.address}">
-                </div>
-                <div class="input-group">
-                    <label for="postcode" id="postcodeLabel">${t.postcodeLabel}</label>
-                    <input type="text" id="postcode" placeholder="${t.postcodePlaceholder}" aria-label="${t.postcodeAria}" value="${contactValues.postcode}">
-                </div>
-                <div class="input-group">
-                    <label for="place" id="placeLabel">${t.placeLabel}</label>
-                    <input type="text" id="place" placeholder="${t.placePlaceholder}" aria-label="${t.placeAria}" value="${contactValues.place}">
-                </div>
-                <div class="input-group">
-                    <label for="phone" id="phoneLabel">${t.phoneLabel}</label>
-                    <input type="tel" id="phone" placeholder="${t.phonePlaceholder}" required aria-label="${t.phoneAria}" aria-required="true" value="${contactValues.phone}">
-                </div>
-                <div class="input-group">
-                    <label for="email" id="emailLabel">${t.emailLabel}</label>
-                    <input type="email" id="email" placeholder="${t.emailPlaceholder}" aria-label="${t.emailAria}" value="${contactValues.email}">
-                </div>
-                <div class="input-group">
-                    <label for="interestBoxes" id="interestBoxesLabel">${t.interestBoxesLabel}</label>
-                    <input type="checkbox" id="interestBoxes" aria-label="${t.interestBoxesAria}" ${contactValues.interestBoxes ? 'checked' : ''}>
-                </div>
-                <div class="input-group">
-                    <label for="interestMattresses" id="interestMattressesLabel">${t.interestMattressesLabel}</label>
-                    <input type="checkbox" id="interestMattresses" aria-label="${t.interestMattressesAria}" ${contactValues.interestMattresses ? 'checked' : ''}>
-                </div>
-            `;
-            elements.print.textContent = t.printButton;
-            elements.print.setAttribute('aria-label', t.printButtonAria);
-            elements.mail.textContent = t.mailButton;
-            elements.mail.setAttribute('aria-label', t.mailButtonAria);
-            elements.whatsapp.textContent = t.whatsappButton;
-            elements.whatsapp.setAttribute('aria-label', t.whatsappButtonAria);
-            document.querySelector(`.language-button[data-lang="${lang}"]`).focus();
-        }
-        function createTabForm(tabId, t, values = {}) {
-            const emailIcon = values.isSentByEmail ? `<img src="assets/email-sent.svg" alt="${t.emailSentIconAlt}" class="sent-icon">` : '';
-            const whatsappIcon = values.isSentByWhatsApp ? `<img src="assets/whatsapp-sent.svg" alt="${t.whatsappSentIconAlt}" class="sent-icon">` : '';
-            const sentIndicator = (values.isSentByEmail || values.isSentByWhatsApp) ? `<p class="sent-indicator">${t.sentToMayo}${emailIcon}${whatsappIcon}</p>` : '';
-            return `
-                <form id="form-${tabId}">
-                    <div class="input-group">
-                        <label for="length-${tabId}">${t.lengthLabel}</label>
-                        <input type="number" id="length-${tabId}" required min="1" placeholder="${t.lengthPlaceholder}" aria-label="${t.lengthAria}" aria-required="true" value="${values.length || ''}">
-                    </div>
-                    <div class="input-group">
-                        <label for="width-${tabId}">${t.widthLabel}</label>
-                        <input type="number" id="width-${tabId}" required min="1" placeholder="${t.widthPlaceholder}" aria-label="${t.widthAria}" aria-required="true" value="${values.width || ''}">
-                    </div>
-                    <div class="input-group">
-                        <label for="leftWall-${tabId}">${t.leftWallLabel}</label>
-                        <select id="leftWall-${tabId}" aria-label="${t.leftWallAria}">
-                            <option value="yes" ${values.leftWall === 'yes' ? 'selected' : ''}>${t.leftWallOptions.yes}</option>
-                            <option value="no" ${values.leftWall === 'no' ? 'selected' : ''}>${t.leftWallOptions.no}</option>
-                            ${currentLanguage === 'nl' ? `<option value="panel" ${values.leftWall === 'panel' ? 'selected' : ''}>${t.leftWallOptions.panel}</option>` : ''}
-                        </select>
-                    </div>
-                    <div class="input-group">
-                        <label for="rightWall-${tabId}">${t.rightWallLabel}</label>
-                        <select id="rightWall-${tabId}" aria-label="${t.rightWallAria}">
-                            <option value="yes" ${values.rightWall === 'yes' ? 'selected' : ''}>${t.rightWallOptions.yes}</option>
-                            <option value="no" ${values.rightWall === 'no' ? 'selected' : ''}>${t.rightWallOptions.no}</option>
-                            ${currentLanguage === 'nl' ? `<option value="panel" ${values.rightWall === 'panel' ? 'selected' : ''}>${t.rightWallOptions.panel}</option>` : ''}
-                        </select>
-                    </div>
-                    <div class="input-group">
-                        <label for="doubleRow-${tabId}">${t.doubleRowLabel}</label>
-                        <select id="doubleRow-${tabId}" aria-label="${t.doubleRowAria}">
-                            <option value="no" ${values.doubleRow === 'no' ? 'selected' : ''}>${t.no}</option>
-                            <option value="yes" ${values.doubleRow === 'yes' ? 'selected' : ''}>${t.yes}</option>
-                        </select>
-                    </div>
-                    <div class="input-group">
-                        <label for="boxWidth-${tabId}">${t.boxWidthLabel}</label>
-                        <select id="boxWidth-${tabId}" aria-label="${t.boxWidthAria}">
-                            ${[110, 112.5, 115, 117.5, 120, 122.5, 125].map(v => `<option value="${v}" ${values.boxWidth === v.toString() ? 'selected' : ''}>${v} cm</option>`).join('')}
-                        </select>
-                    </div>
-                    <div class="input-group">
-                        <label for="beugelLength-${tabId}">${t.beugelLengthLabel}</label>
-                        <span class="auto-calculated">${t.autoCalculated}</span>
-                        <select id="beugelLength-${tabId}" aria-label="${t.beugelLengthAria}">
-                            ${[175, 183, 198, 206, 213].map(v => `<option value="${v}" ${values.beugelLength === v.toString() ? 'selected' : ''}>${v} cm</option>`).join('')}
-                        </select>
-                    </div>
-                    <div class="calculate-button-container">
-                        <button type="button" id="calculate-${tabId}" aria-label="${t.calculateButtonAria}">${t.calculateButton}</button>
-                    </div>
-                    <div id="result-${tabId}" class="result" role="alert" aria-live="polite">${sentIndicator}</div>
-                </form>
-            `;
-        }
-        function getContactInfo() {
-            return [
-                { id: 'name', label: translations[currentLanguage].nameLabel },
-                { id: 'address', label: translations[currentLanguage].addressLabel },
-                { id: 'postcode', label: translations[currentLanguage].postcodeLabel },
-                { id: 'place', label: translations[currentLanguage].placeLabel },
-                { id: 'phone', label: translations[currentLanguage].phoneLabel },
-                { id: 'email', label: translations[currentLanguage].emailLabel },
-                { id: 'interestBoxes', label: translations[currentLanguage].interestBoxesLabel, type: 'checkbox' },
-                { id: 'interestMattresses', label: translations[currentLanguage].interestMattressesLabel, type: 'checkbox' }
-            ].map(field => {
-                const element = document.getElementById(field.id);
-                const value = field.type === 'checkbox' ? (element.checked ? translations[currentLanguage].yes : translations[currentLanguage].no) : element.value.trim();
-                return value ? `${field.label} ${value}` : '';
-            }).filter(Boolean).join('\n');
-        }
-        function createTab() {
-            const tabId = `tab-${++tabCounter}`;
-            const tabName = tabCounter === 1 ? `${translations[currentLanguage].tabLabel} ${tabCounter}` : 
-                            (prompt(translations[currentLanguage].tabNamePrompt, `${translations[currentLanguage].tabLabel} ${tabCounter}`) || `${translations[currentLanguage].tabLabel} ${tabCounter}`);
-            tabData[tabId] = { tabName, lastWidth: null, lastDoubleRow: null, isBeugelLengthManuallySet: false, isValid: false, isSentByEmail: false, isSentByWhatsApp: false, parts: {} };
-            const tab = document.createElement('div');
-            tab.className = 'tab';
-            tab.id = tabId;
-            tab.innerHTML = `${tabName}<span class="remove-tab" id="remove-${tabId}" aria-label="${translations[currentLanguage].removeTabAria} ${tabName}">&times;</span>`;
-            elements.tabBar.appendChild(tab);
-            tab.addEventListener('click', e => !e.target.classList.contains('remove-tab') && switchTab(tabId));
-            tab.querySelector(`#remove-${tabId}`).addEventListener('click', () => removeTab(tabId));
-            const tabContent = document.createElement('div');
-            tabContent.className = 'tab-content';
-            tabContent.id = `content-${tabId}`;
-            tabContent.innerHTML = createTabForm(tabId, translations[currentLanguage]);
-            elements.tabContents.appendChild(tabContent);
-            document.getElementById(`calculate-${tabId}`).addEventListener('click', () => calculate(tabId));
-            document.getElementById(`beugelLength-${tabId}`).addEventListener('change', () => tabData[tabId].isBeugelLengthManuallySet = true);
-            if (!activeTab) switchTab(tabId);
-        }
-        function switchTab(tabId) {
-            if (activeTab) {
-                document.getElementById(activeTab).classList.remove('active');
-                document.getElementById(`content-${activeTab}`).classList.remove('active');
-            }
-            activeTab = tabId;
-            document.getElementById(tabId).classList.add('active');
-            document.getElementById(`content-${activeTab}`).classList.add('active');
-        }
-        function removeTab(tabId) {
-            if (Object.keys(tabData).length <= 1) return alert(translations[currentLanguage].lastTabError);
-            if (!confirm(translations[currentLanguage].confirmRemove.replace('{tabName}', tabData[tabId].tabName))) return;
-            const tab = document.getElementById(tabId);
-            const tabContent = document.getElementById(`content-${tabId}`);
-            if (tab && tabContent) {
-                tab.remove();
-                tabContent.remove();
-                console.log(`Tab ${tabId} verwijderd`);
-            } else {
-                console.error(`Fout: Kon tab ${tabId} niet vinden`);
-                return;
-            }
-            delete tabData[tabId];
-            const remainingTabs = Object.keys(tabData);
-            if (remainingTabs.length > 0) switchTab(remainingTabs[0]);
-            else activeTab = null;
-        }
-        function calculate(tabId) {
-            const t = translations[currentLanguage];
-            const inputs = {
-                length: parseFloat(document.getElementById(`length-${tabId}`).value),
-                width: parseFloat(document.getElementById(`width-${tabId}`).value),
-                boxWidth: parseFloat(document.getElementById(`boxWidth-${tabId}`).value),
-                beugelLength: parseFloat(document.getElementById(`beugelLength-${tabId}`).value),
-                leftWall: document.getElementById(`leftWall-${tabId}`).value,
-                rightWall: document.getElementById(`rightWall-${tabId}`).value,
-                doubleRow: document.getElementById(`doubleRow-${tabId}`).value === 'yes'
-            };
-            const resultElem = document.getElementById(`result-${tabId}`);
-            if (isNaN(inputs.length) || isNaN(inputs.width) || isNaN(inputs.boxWidth) || inputs.length <= 0 || inputs.width <= 0) {
-                resultElem.innerHTML = `<p class='advice'>${t.invalidInput}</p>`;
-                tabData[tabId].isValid = false;
-                return;
-            }
-            tabData[tabId].isValid = true;
-            if (!tabData[tabId].isBeugelLengthManuallySet || inputs.width !== tabData[tabId].lastWidth || inputs.doubleRow !== tabData[tabId].lastDoubleRow) {
-                const beugelLengths = [175, 183, 198, 206, 213];
-                inputs.beugelLength = beugelLengths.reduce((best, length) => {
-                    const space = inputs.doubleRow ? (inputs.width - (2 * length) - 7) / 2 : inputs.width - (length + 13);
-                    return Math.abs(space - 25) < Math.abs((inputs.doubleRow ? (inputs.width - (2 * best) - 7) / 2 : inputs.width - (best + 13)) - 25) ? length : best;
-                }, beugelLengths[0]);
-                document.getElementById(`beugelLength-${tabId}`).value = inputs.beugelLength;
-                tabData[tabId].lastWidth = inputs.width;
-                tabData[tabId].lastDoubleRow = inputs.doubleRow;
-            }
-            const boxWidths = [110, 112.5, 115, 117.5, 120, 122.5, 125];
-            const bestBoxWidth = boxWidths.reduce((best, width) => inputs.length % width < inputs.length % best ? width : best, boxWidths[0]);
-            const numberOfBoxes = Math.floor(inputs.length / inputs.boxWidth);
-            const effectiveNumberOfBoxes = inputs.doubleRow ? numberOfBoxes * 2 : numberOfBoxes;
-            const postAdjustment = (inputs.leftWall === 'yes' || inputs.leftWall === 'panel') && (inputs.rightWall === 'yes' || inputs.rightWall === 'panel') ? -1 : 
-                                  (inputs.leftWall === 'no' && inputs.rightWall === 'no') ? 1 : 0;
-            const parts = {
-                boxes: effectiveNumberOfBoxes,
-                posts: numberOfBoxes + postAdjustment,
-                brackets: (numberOfBoxes + postAdjustment) * (inputs.doubleRow ? 2 : 1),
-                headBoards: inputs.doubleRow ? Math.max(0, Math.floor(effectiveNumberOfBoxes / 2) - 2) : Math.max(0, effectiveNumberOfBoxes - 2),
-                endHeadBoards: 2,
-                wavyWithers: effectiveNumberOfBoxes,
-                couplers: (numberOfBoxes + postAdjustment) * (inputs.doubleRow ? 2 : 1),
-                endPiecesWithers: inputs.doubleRow ? 4 : 2,
-                endPiecesHeadWithers: inputs.doubleRow ? 6 : 4,
-                closingPlates: inputs.doubleRow ? 0 : (numberOfBoxes + postAdjustment) * 2,
-                concreteAnchors: (numberOfBoxes + postAdjustment) * 4,
-                m12x100: (numberOfBoxes + postAdjustment) * (inputs.doubleRow ? 10 : 8),
-                m10x60: ((numberOfBoxes + postAdjustment) * (inputs.doubleRow ? 2 : 1) * 2) + (inputs.doubleRow ? 4 : 2),
-                plasticCaps: numberOfBoxes + postAdjustment,
-                capBrackets: (numberOfBoxes + postAdjustment) * (inputs.doubleRow ? 2 : 1),
-                uBolts: (numberOfBoxes + postAdjustment) * (inputs.doubleRow ? 2 : 1) * 3,
-                mayoMattress: effectiveNumberOfBoxes,
-                mayoStrip: effectiveNumberOfBoxes + 1 + (inputs.doubleRow ? 1 : 0),
-                kneeRails: Math.ceil(inputs.length / 220) * (inputs.doubleRow ? 2 : 1),
-                endPanels: currentLanguage === 'nl' ? (inputs.leftWall === 'panel' ? 1 : 0) + (inputs.rightWall === 'panel' ? 1 : 0) : 0
-            };
-            const remainingLength = inputs.length % inputs.boxWidth;
-            const spaceBehindBracket = inputs.doubleRow ? (inputs.width - (2 * inputs.beugelLength) - 7) / 2 : inputs.width - (inputs.beugelLength + 13);
-            const advice = spaceBehindBracket > 35 ? `<span class="advice">${t.result.longBracketAdvice}</span>` : spaceBehindBracket < 15 ? `<span class="advice">${t.result.shortBracketAdvice}</span>` : '';
-            const suggestion = inputs.boxWidth !== bestBoxWidth ? `<span class="suggestion">${t.result.suggestion.replace('{value}', bestBoxWidth)}</span>` : '';
-            tabData[tabId].parts = parts;
-            const emailIcon = tabData[tabId].isSentByEmail ? `<img src="assets/email-sent.svg" alt="${t.emailSentIconAlt}" class="sent-icon">` : '';
-            const whatsappIcon = tabData[tabId].isSentByWhatsApp ? `<img src="assets/whatsapp-sent.svg" alt="${t.whatsappSentIconAlt}" class="sent-icon">` : '';
-            const sentIndicator = (tabData[tabId].isSentByEmail || tabData[tabId].isSentByWhatsApp) ? `<p class="sent-indicator">${t.sentToMayo}${emailIcon}${whatsappIcon}</p>` : '';
-            resultElem.innerHTML = `
-                <h3>${t.tabLabel} ${tabData[tabId].tabName}</h3>
-                ${t.result.length.replace('{value}', inputs.length.toFixed(2))}<br>
-                ${t.result.width.replace('{value}', inputs.width.toFixed(2))}<br>
-                ${t.result.boxes.replace('{value}', effectiveNumberOfBoxes)}<br>
-                ${t.result.remainingLength.replace('{value}', remainingLength.toFixed(2))}<br>
-                ${t.result.selectedBoxWidth.replace('{value}', inputs.boxWidth)}<br>
-                ${t.result.beugelLength.replace('{value}', inputs.beugelLength)}<br>
-                ${t.result.spaceBehind.replace('{value}', spaceBehindBracket.toFixed(2))}<br>
-                ${advice}<br>
-                ${suggestion}<br><br>
-                <b>${t.result.partsList}</b>
-                <ul>
-                    ${Object.entries(parts).map(([key, value]) => key !== 'boxes' && (key !== 'endPanels' || currentLanguage === 'nl') ? `<li><b>${t.result[key].replace('{value}', value)}</b></li>` : '').join('')}
-                </ul>
-                ${sentIndicator}
-            `;
-        }
-        function validateTab(tabId) {
-            return tabData[tabId]?.isValid && !document.getElementById(`result-${tabId}`)?.innerHTML.includes(translations[currentLanguage].invalidInput);
-        }
-        function getTabResults(tabId) {
-            const t = translations[currentLanguage];
-            const data = tabData[tabId];
-            if (!data.isValid) return '';
-            const inputs = {
-                length: parseFloat(document.getElementById(`length-${tabId}`).value),
-                width: parseFloat(document.getElementById(`width-${tabId}`).value),
-                boxWidth: parseFloat(document.getElementById(`boxWidth-${tabId}`).value),
-                beugelLength: parseFloat(document.getElementById(`beugelLength-${tabId}`).value)
-            };
-            const remainingLength = inputs.length % inputs.boxWidth;
-            const spaceBehindBracket = data.doubleRow ? (inputs.width - (2 * inputs.beugelLength) - 7) / 2 : inputs.width - (inputs.beugelLength + 13);
-            const advice = spaceBehindBracket > 35 ? t.result.longBracketAdvice : spaceBehindBracket < 15 ? t.result.shortBracketAdvice : '';
-            const bestBoxWidth = [110, 112.5, 115, 117.5, 120, 122.5, 125].reduce((best, width) => inputs.length % width < inputs.length % best ? width : best, 110);
-            const suggestion = inputs.boxWidth !== bestBoxWidth ? t.result.suggestion.replace('{value}', bestBoxWidth) : '';
-            const partsList = `${t.result.partsList}\n${Object.entries(data.parts || {}).map(([key, value]) => key !== 'boxes' && (key !== 'endPanels' || currentLanguage === 'nl') ? t.result[key].replace('{value}', value) : '').filter(Boolean).join('\n')}`;
-            const result = `${t.tabLabel} ${data.tabName}\n${[
-                t.result.length.replace('{value}', inputs.length.toFixed(2)),
-                t.result.width.replace('{value}', inputs.width.toFixed(2)),
-                t.result.boxes.replace('{value}', data.parts?.boxes || 0),
-                t.result.remainingLength.replace('{value}', remainingLength.toFixed(2)),
-                t.result.selectedBoxWidth.replace('{value}', inputs.boxWidth),
-                t.result.beugelLength.replace('{value}', inputs.beugelLength),
-                t.result.spaceBehind.replace('{value}', spaceBehindBracket.toFixed(2)),
-                advice,
-                suggestion,
-                partsList
-            ].filter(Boolean).join('\n')}`;
-            console.log(`Resultaten voor tabblad ${tabId}:`, result);
-            return result;
-        }
-        function validateContactInfo() {
-            if (!document.getElementById('phone').value.trim()) {
-                document.getElementById(`result-${activeTab}`).innerHTML += `<p class='advice'>${translations[currentLanguage].phoneRequired}</p>`;
-                return false;
-            }
-            return true;
-        }
-        elements.addTab.addEventListener('click', createTab);
-        elements.print.addEventListener('click', () => {
-            if (!activeTab) return alert(translations[currentLanguage].noTabs);
-            if (!validateTab(activeTab)) return alert(translations[currentLanguage].invalidResults);
-            window.print();
+    <div class="result" id="res-${id}"></div>
+    <div class="diagram" id="diag-${id}"></div>
+    <div class="result parts-block" id="parts-${id}"></div>
+  </div>`;
+}
+
+function addTab(name){
+  counter++;
+  const id = 't'+counter;
+  tabs[id] = {name: name||`${t('add').replace('Nieuw ','').replace('Neues ','').replace('Nouveau ','').replace('New ','')} ${counter}`, len:'0',dep:'0',lw:'yes',rw:'yes',dbl:'no',bw:115,bg:175,manualBg:false};
+  const tab = document.createElement('div');
+  tab.className = 'tab'+(active? '':' active');
+  tab.id = id;
+  tab.innerHTML = `${tabs[id].name} <span class="remove" data-id="${id}">×</span>`;
+  tab.onclick = e => { if(!e.target.classList.contains('remove')) switchTab(id); };
+  tab.querySelector('.remove').onclick = e => { e.stopPropagation(); removeTab(id); };
+  document.getElementById('tabBar').appendChild(tab);
+  document.getElementById('tabContents').insertAdjacentHTML('beforeend', createForm(id));
+  bindInputs(id);
+  if(!active) switchTab(id);
+  else calc(id);
+}
+
+function switchTab(id){
+  if(active){ document.getElementById(active)?.classList.remove('active'); document.getElementById('content-'+active).style.display='none'; }
+  active=id;
+  document.getElementById(id)?.classList.add('active');
+  document.getElementById('content-'+id).style.display='block';
+  calc(id);
+}
+
+function removeTab(id){
+  if(Object.keys(tabs).length<=1) return;
+  delete tabs[id];
+  document.getElementById(id)?.remove();
+  document.getElementById('content-'+id)?.remove();
+  if(active===id){ const next=Object.keys(tabs)[0]; switchTab(next); }
+}
+
+function bindInputs(id){
+  ['len','dep','lw','rw','dbl','bw','bg'].forEach(k=>{
+    const el=document.getElementById(`${k==='len'?'len':k==='dep'?'dep':k==='lw'?'lw':k==='rw'?'rw':k==='dbl'?'dbl':k==='bw'?'bw':'bg'}-${id}`);
+    if(!el) return;
+    el.oninput = el.onchange = ()=>{
+      if(k==='bg') tabs[id].manualBg=true;
+      tabs[id][k]=el.value;
+      // lengte/diepte: alleen via Bereken-knop
+      if(k!=='len' && k!=='dep') calc(id);
+    };
+  });
+  const btn=document.getElementById('calcbtn-'+id);
+  if(btn) btn.onclick = ()=> calc(id);
+}
+
+function calc(id){
+  const d=tabs[id];
+  const len=parseFloat(document.getElementById('len-'+id).value);
+  const dep=parseFloat(document.getElementById('dep-'+id).value);
+  const bw=parseFloat(document.getElementById('bw-'+id).value);
+  let bg=parseFloat(document.getElementById('bg-'+id).value);
+  const lw=document.getElementById('lw-'+id).value;
+  const rw=document.getElementById('rw-'+id).value;
+  const dbl=document.getElementById('dbl-'+id).value==='yes';
+  const res=document.getElementById('res-'+id);
+  const diag=document.getElementById('diag-'+id);
+
+  if(isNaN(len)||isNaN(dep)||len<=0||dep<=0){
+    res.innerHTML='';
+    const partsEl=document.getElementById('parts-'+id);
+    if(partsEl) partsEl.innerHTML='';
+    diag.innerHTML=`<p style="text-align:center;padding:24px;color:#64748b;font-size:1rem;">${t('invalid')}</p>`;
+    return;
+  }
+
+  // auto beugel
+  if(!d.manualBg){
+    bg = beugelOpts.reduce((best,l)=>{
+      const sp = dbl ? (dep-(2*l)-7)/2 : dep-(l+13);
+      const bestSp = dbl ? (dep-(2*best)-7)/2 : dep-(best+13);
+      return Math.abs(sp-25)<Math.abs(bestSp-25)?l:best;
+    },beugelOpts[0]);
+    document.getElementById('bg-'+id).value=bg;
+  }
+
+  const n = Math.floor(len/bw);
+  const boxes = dbl ? n*2 : n;
+  const postAdj = ((lw==='yes'||lw==='panel')&&(rw==='yes'||rw==='panel'))?-1:((lw==='no'&&rw==='no')?1:0);
+  const posts = n + postAdj;
+  const space = dbl ? (dep-(2*bg)-7)/2 : dep-(bg+13);
+  const rem = len % bw;
+  const remHalf = rem / 2;
+  const endBoxW = bw + remHalf;
+  const bestW = boxWidths.reduce((b,w)=> (len%w)<(len%b)?w:b ,boxWidths[0]);
+
+  // Eindstuk schoftboom/kopboom per uiteinde
+  // enkele: muur=2, paneel=1, box/beugel=1
+  // dubbel: muur=1.5, paneel=1.5, box/beugel=0.5
+  function endStuk(side){
+    // enkele: muur=2, paneel=1, box=1
+    // dubbel: muur=3, paneel=1, box=1  (per zijde)
+    if(side==='yes') return dbl ? 3 : 2;
+    if(side==='panel') return dbl ? 1 : 1;
+    if(side==='no') return dbl ? 1 : 1;
+    return 0;
+  }
+  const endW = endStuk(lw) + endStuk(rw);
+
+  const parts = {
+    posts, brackets: posts*(dbl?2:1), head: dbl?Math.max(0,Math.floor(boxes/2)-2):Math.max(0,boxes-2),
+    endHead:2, wavy:boxes, couplers:posts*(dbl?2:1), endW,
+    close: dbl?0:posts*2, anchors:posts*4, m12:posts*(dbl?10:8), m10:(posts*(dbl?2:1)*2)+(dbl?4:2),
+    caps:posts, capB:posts*(dbl?2:1), u:posts*(dbl?2:1)*3, mattress:boxes, strip:boxes+1+(dbl?1:0),
+    knee:Math.ceil(len/220)*(dbl?2:1), endP: ((lw==='panel'?1:0)+(rw==='panel'?1:0))*(dbl?2:1)
+  };
+
+  // Schematic – beugel length scales visually with selected bg
+  const mattressLen = 183;
+  const showN = Math.min(n, 8);
+  const scale = 0.30;
+  const mW = Math.max(bw * scale, 22);
+  const endMW = Math.max(endBoxW * scale, 22); // 1e/laatste box visueel breder
+  const mH = mattressLen * scale;
+  // beugel visual height proportional to selected beugel length (bg in cm)
+  const bH = Math.max(bg * scale * 0.85, 40);
+  const gap = 10;
+  const postSize = 9;
+  const wallW = 11;
+  const panelW = Math.round(wallW / 3);
+  const mayo = '#0077C8';
+  let g = '';
+
+  function beugel(bx, yTop, yBot, squareY){
+    return `<line x1="${bx}" y1="${yTop}" x2="${bx}" y2="${yBot}" stroke="${mayo}" stroke-width="2.5" stroke-linecap="round"/>
+            <rect x="${bx - postSize/2}" y="${squareY}" width="${postSize}" height="${postSize}" fill="#8b95a5" stroke="#5a6575" rx="1"/>`;
+  }
+  function wall(x, y, h){
+    return `<rect x="${x}" y="${y}" width="${wallW}" height="${h}" fill="#8b95a5" stroke="#6b7280" rx="1"/>`;
+  }
+  function panel(x, y, h){
+    return `<rect x="${x}" y="${y}" width="${panelW}" height="${h}" fill="#9ca3af" stroke="#6b7280" rx="3"/>`;
+  }
+
+  if(dbl){
+    // double: each row height follows beugel length
+    const rowH = Math.max(bH * 0.48, 36);
+    const startY = 32;
+    const midY = startY + rowH + 4;
+    let x0 = 12;
+    if(lw==='yes'){
+      g += wall(x0, startY, rowH) + wall(x0, midY+4, rowH);
+      x0 += wallW + 2;
+    } else if(lw==='panel'){
+      g += panel(x0, startY, rowH) + panel(x0, midY+4, rowH);
+      x0 += panelW + 2;
+    } else {
+      g += beugel(x0 + postSize/2, startY, startY+rowH, midY - postSize/2);
+      g += `<line x1="${x0 + postSize/2}" y1="${midY+4}" x2="${x0 + postSize/2}" y2="${midY+4+rowH}" stroke="${mayo}" stroke-width="2.5" stroke-linecap="round"/>`;
+      x0 += postSize + 4;
+    }
+    let xCursor = x0;
+    const widths = [];
+    for(let i=0; i<showN; i++){
+      const isEnd = (i===0 || i===showN-1) && remHalf > 0.05;
+      const wi = isEnd ? endMW : mW;
+      widths.push(wi);
+      g += `<rect x="${xCursor}" y="${startY}" width="${wi}" height="${rowH}" fill="#1a1a1a" stroke="#333" stroke-width="1" rx="1"/>
+            <rect x="${xCursor}" y="${midY+4}" width="${wi}" height="${rowH}" fill="#1a1a1a" stroke="#333" stroke-width="1" rx="1"/>`;
+      if(i < showN - 1){
+        const bx = xCursor + wi + gap/2;
+        g += beugel(bx, startY, startY+rowH, midY - postSize/2);
+        g += `<line x1="${bx}" y1="${midY+4}" x2="${bx}" y2="${midY+4+rowH}" stroke="${mayo}" stroke-width="2.5" stroke-linecap="round"/>`;
+      }
+      xCursor += wi + gap;
+    }
+    let endX = xCursor - gap;
+    if(rw==='yes'){
+      g += wall(endX + 2, startY, rowH) + wall(endX + 2, midY+4, rowH);
+      endX += wallW + 4;
+    } else if(rw==='panel'){
+      g += panel(endX + 2, startY, rowH) + panel(endX + 2, midY+4, rowH);
+      endX += panelW + 4;
+    } else {
+      const bx = endX + gap/2;
+      g += beugel(bx, startY, startY+rowH, midY - postSize/2);
+      g += `<line x1="${bx}" y1="${midY+4}" x2="${bx}" y2="${midY+4+rowH}" stroke="${mayo}" stroke-width="2.5" stroke-linecap="round"/>`;
+      endX += gap + 4;
+    }
+    const totalW = endX + 16;
+    // breedte boven elk matras
+    let lx = x0;
+    for(let i=0; i<showN; i++){
+      const isEnd = (i===0 || i===showN-1) && remHalf > 0.05;
+      const label = isEnd ? endBoxW.toFixed(1) : bw;
+      const col = isEnd ? '#dc2626' : '#374151';
+      g += `<text x="${lx + widths[i]/2}" y="${startY - 5}" text-anchor="middle" font-size="10" fill="${col}" font-weight="600">${label} cm</text>`;
+      lx += widths[i] + gap;
+    }
+    g += `<text x="${totalW/2}" y="12" text-anchor="middle" font-size="11" font-weight="600" fill="${mayo}">${boxes} ${t('spacesLabel')}</text>`;
+        diag.innerHTML = `<svg viewBox="0 0 ${totalW} ${midY+4+rowH+12}" width="100%" style="max-height:190px">${g}
+      ${n>showN?`<text x="${endX+2}" y="${midY}" font-size="12" fill="#dc2626" font-weight="bold">+${n-showN}</text>`:''}
+    </svg>`;
+  } else {
+    // single: blue line height = beugel length scale; mattress stays 183cm depth visual
+    const topY = 36;
+    // center the shorter/longer beugel line within mattress height
+    const lineTop = topY + Math.max(0, (mH - bH) / 2);
+    const lineBot = lineTop + bH;
+    let x0 = 14;
+    if(lw==='yes'){
+      g += wall(x0, topY, mH);
+      x0 += wallW + 2;
+    } else if(lw==='panel'){
+      g += panel(x0, topY, mH);
+      x0 += panelW + 2;
+    } else {
+      g += beugel(x0 + postSize/2, lineTop, lineBot, topY);
+      x0 += postSize + 4;
+    }
+    let xCursor = x0;
+    const widths = [];
+    for(let i=0; i<showN; i++){
+      const isEnd = (i===0 || i===showN-1) && remHalf > 0.05;
+      const wi = isEnd ? endMW : mW;
+      widths.push(wi);
+      g += `<rect x="${xCursor}" y="${topY}" width="${wi}" height="${mH}" fill="#1a1a1a" stroke="#333" stroke-width="1" rx="1"/>`;
+      if(i < showN - 1){
+        const bx = xCursor + wi + gap/2;
+        g += beugel(bx, lineTop, lineBot, topY);
+      }
+      xCursor += wi + gap;
+    }
+    let endX = xCursor - gap;
+    if(rw==='yes'){
+      g += wall(endX + 2, topY, mH);
+      endX += wallW + 4;
+    } else if(rw==='panel'){
+      g += panel(endX + 2, topY, mH);
+      endX += panelW + 4;
+    } else {
+      const bx = endX + gap/2;
+      g += beugel(bx, lineTop, lineBot, topY);
+      endX += gap + 4;
+    }
+    const totalW = endX + 20;
+    // breedte boven elk matras
+    let lx = x0;
+    for(let i=0; i<showN; i++){
+      const isEnd = (i===0 || i===showN-1) && remHalf > 0.05;
+      const label = isEnd ? endBoxW.toFixed(1) : bw;
+      const col = isEnd ? '#dc2626' : '#374151';
+      g += `<text x="${lx + widths[i]/2}" y="${topY - 5}" text-anchor="middle" font-size="10" fill="${col}" font-weight="600">${label} cm</text>`;
+      lx += widths[i] + gap;
+    }
+    g += `<text x="${totalW/2}" y="13" text-anchor="middle" font-size="12" font-weight="600" fill="${mayo}">${boxes} ${t('spacesLabel')}</text>`;
+        diag.innerHTML = `<svg viewBox="0 0 ${totalW} ${topY + mH + 10}" width="100%" style="max-height:210px">${g}
+      ${n>showN?`<text x="${endX+4}" y="${topY + mH/2}" font-size="12" fill="#dc2626" font-weight="bold">+${n-showN}</text>`:''}
+    </svg>`;
+  }
+
+  let html=`<h3>${t('result')}</h3>
+    <p><b>${t('boxes')}:</b> ${boxes}</p>
+    <p><b>${t('remaining')}:</b> ${rem.toFixed(1)} cm ${t('remDetail').replace('{v}', endBoxW.toFixed(1))}</p>
+    <p><b>${t('space')}:</b> ${space.toFixed(1)} cm</p>`;
+  if(space>35) html+=`<p class="advice">⚠️ ${t('adviceLong')}</p>`;
+  if(space<15) html+=`<p class="advice">⚠️ ${t('adviceShort')}</p>`;
+  if(bw!==bestW) html+=`<p class="suggestion">${t('suggest').replace('{v}',bestW)}</p>`;
+  res.innerHTML=html;
+
+  // parts list and everything after → under the visual
+  const partsEl=document.getElementById('parts-'+id);
+  let partsHtml=`<b>${t('parts')}</b><ul class="parts">`;
+  const labels={posts:t('posts'),brackets:t('brackets'),head:t('head'),endHead:t('endHead'),wavy:t('wavy'),couplers:t('couplers'),endW:t('endW'),endHW:t('endHW'),close:t('close'),anchors:t('anchors'),m12:t('m12'),m10:t('m10'),caps:t('caps'),capB:t('capB'),u:t('u'),mattress:t('mattress'),strip:t('strip'),knee:t('knee'),endP:t('endP')};
+  for(const [k,v] of Object.entries(parts)){
+    if(k==='endP'&&lang!=='nl') continue;
+    if(k==='endHW') continue;
+    if(v>0) partsHtml+=`<li><b>${labels[k]||k}:</b> ${v}</li>`;
+  }
+  partsHtml+='</ul>';
+  if(partsEl) partsEl.innerHTML=partsHtml;
+
+  tabs[id].parts=parts; tabs[id].boxes=boxes; tabs[id].rem=rem; tabs[id].space=space;
+}
+
+function updateLang(l){
+  lang=l;
+  document.querySelectorAll('.lang-btn').forEach(b=>b.classList.toggle('active',b.dataset.lang===l));
+  document.getElementById('title').textContent=t('title');
+  document.getElementById('addLabel').textContent=t('add');
+  document.getElementById('contactTitle').textContent=t('contact');
+  renderContact();
+  // rebuild tabs
+  const data=JSON.parse(JSON.stringify(tabs));
+  document.getElementById('tabBar').innerHTML='';
+  document.getElementById('tabContents').innerHTML='';
+  tabs={}; counter=0; active=null;
+  Object.values(data).forEach(d=>{
+    addTab(d.name);
+    const id='t'+counter;
+    Object.assign(tabs[id],d);
+    ['len','dep','lw','rw','dbl','bw','bg'].forEach(k=>{
+      const el=document.getElementById((k==='len'?'len':k==='dep'?'dep':k==='lw'?'lw':k==='rw'?'rw':k==='dbl'?'dbl':k==='bw'?'bw':'bg')+'-'+id);
+      if(el&&d[k]!==undefined) el.value=d[k];
+    });
+    calc(id);
+  });
+}
+
+function renderContact(){
+  document.getElementById('contactFields').innerHTML=`
+    <div><label>${t('name')}</label><input id="c-name"></div>
+    <div><label>${t('address')}</label><input id="c-addr"></div>
+    <div><label>${t('postcode')}</label><input id="c-pc"></div>
+    <div><label>${t('place')}</label><input id="c-place"></div>
+    <div><label>${t('phone')}</label><input id="c-phone" type="tel"></div>
+    <div><label>${t('email')}</label><input id="c-email" type="email"></div>
+    <div class="checkbox-row"><input type="checkbox" id="c-boxes"><label for="c-boxes">${t('boxesInterest')}</label></div>
+    <div class="sub-options" id="box-sub">
+      <div class="checkbox-row"><input type="checkbox" id="c-withMat"><label for="c-withMat">${t('withMat')}</label></div>
+      <div class="checkbox-row"><input type="checkbox" id="c-withDeep"><label for="c-withDeep">${t('withDeep')}</label></div>
+    </div>
+    <div class="checkbox-row"><input type="checkbox" id="c-mat"><label for="c-mat">${t('matInterest')}</label></div>`;
+  const boxesCb = document.getElementById('c-boxes');
+  const sub = document.getElementById('box-sub');
+  if(boxesCb && sub){
+    boxesCb.onchange = ()=>{
+      sub.classList.toggle('show', boxesCb.checked);
+      if(!boxesCb.checked){
+        document.getElementById('c-withMat').checked = false;
+        document.getElementById('c-withDeep').checked = false;
+      }
+    };
+  }
+}
+
+function getContact(){
+  return {name:c('c-name'),addr:c('c-addr'),pc:c('c-pc'),place:c('c-place'),phone:c('c-phone'),email:c('c-email'),
+    boxes:document.getElementById('c-boxes')?.checked,
+    withMat:document.getElementById('c-withMat')?.checked,
+    withDeep:document.getElementById('c-withDeep')?.checked,
+    mat:document.getElementById('c-mat')?.checked};
+  function c(id){return document.getElementById(id)?.value||'';}
+}
+
+function save(){
+  localStorage.setItem('mayoCalc',JSON.stringify({tabs,contact:getContact(),lang}));
+  toast(t('saved'));
+}
+function load(){
+  const raw=localStorage.getItem('mayoCalc');
+  if(!raw){toast(t('noData'));return;}
+  const data=JSON.parse(raw);
+  lang=data.lang||'nl';
+  updateLang(lang);
+  // restore values after rebuild
+  setTimeout(()=>{
+    Object.entries(data.tabs||{}).forEach(([oldId,d],i)=>{
+      const id='t'+(i+1);
+      if(tabs[id]){
+        Object.assign(tabs[id],d);
+        ['len','dep','lw','rw','dbl','bw','bg'].forEach(k=>{
+          const el=document.getElementById((k==='len'?'len':k==='dep'?'dep':k==='lw'?'lw':k==='rw'?'rw':k==='dbl'?'dbl':k==='bw'?'bw':'bg')+'-'+id);
+          if(el&&d[k]!==undefined) el.value=d[k];
         });
-        elements.mail.addEventListener('click', () => {
-            if (!activeTab) return alert(translations[currentLanguage].noTabs);
-            if (!validateTab(activeTab)) return alert(translations[currentLanguage].invalidResults);
-            if (!validateContactInfo()) return;
-            const results = getTabResults(activeTab);
-            if (!results) {
-                console.error('Geen geldige resultaten voor e-mail');
-                document.getElementById(`result-${activeTab}`).innerHTML += `<p class='advice'>${translations[currentLanguage].invalidResults}</p>`;
-                return;
-            }
-            const contactInfo = getContactInfo();
-            const fullContent = `${translations[currentLanguage].result.emailSubject} - ${tabData[activeTab].tabName}:\n\n${results}\n\n${contactInfo}`;
-            const maxEmailLength = 1000;
-            const emailBody = encodeURIComponent(fullContent.slice(0, maxEmailLength));
-            const subject = encodeURIComponent(`${translations[currentLanguage].result.emailSubject} - ${tabData[activeTab].tabName}`);
-            const mailtoLink = `mailto:Rob@moduulbouw.nl?subject=${subject}&body=${emailBody}`;
-            try {
-                console.log('Proberen mailto-link te openen:', mailtoLink);
-                const link = document.createElement('a');
-                link.href = mailtoLink;
-                link.style.display = 'none';
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-                tabData[activeTab].isSentByEmail = true;
-                document.getElementById(`result-${activeTab}`).innerHTML += `<p class="sent-indicator">${translations[currentLanguage].sentToMayo}<img src="assets/email-sent.svg" alt="${translations[currentLanguage].emailSentIconAlt}" class="sent-icon"></p>`;
-                if (fullContent.length > maxEmailLength) {
-                    document.getElementById(`result-${activeTab}`).innerHTML += `<p class='advice'>${translations[currentLanguage].bodyTruncated}</p>`;
-                    showFallback('email', results, contactInfo);
-                }
-            } catch (error) {
-                console.error('Fout bij openen e-mail:', error);
-                showFallback('email', results, contactInfo);
-                if (fullContent.length > maxEmailLength) {
-                    document.getElementById(`result-${activeTab}`).innerHTML += `<p class='advice'>${translations[currentLanguage].bodyTruncated}</p>`;
-                }
-                tabData[activeTab].isSentByEmail = true;
-                document.getElementById(`result-${activeTab}`).innerHTML += `<p class="sent-indicator">${translations[currentLanguage].sentToMayo}<img src="assets/email-sent.svg" alt="${translations[currentLanguage].emailSentIconAlt}" class="sent-icon"></p>`;
-            }
-        });
-        elements.whatsapp.addEventListener('click', () => {
-            if (!activeTab) return alert(translations[currentLanguage].noTabs);
-            if (!validateTab(activeTab)) return alert(translations[currentLanguage].invalidResults);
-            if (!validateContactInfo()) return;
-            const results = getTabResults(activeTab);
-            if (!results) {
-                console.error('Geen geldige resultaten voor WhatsApp');
-                document.getElementById(`result-${activeTab}`).innerHTML += `<p class='advice'>${translations[currentLanguage].invalidResults}</p>`;
-                return;
-            }
-            const contactInfo = getContactInfo();
-            const fullContent = `${translations[currentLanguage].result.whatsappTitle} - ${tabData[activeTab].tabName}:\n\n${results}\n\n${contactInfo}`;
-            const maxWhatsAppLength = 3000;
-            const whatsappBody = encodeURIComponent(fullContent.slice(0, maxWhatsAppLength));
-            const phoneNumber = '31630569255';
-            try {
-                console.log('Proberen WhatsApp-link te openen:', `https://wa.me/${phoneNumber}?text=${whatsappBody}`);
-                window.open(`https://wa.me/${phoneNumber}?text=${whatsappBody}`, '_blank');
-                setTimeout(() => {
-                    if (document.hasFocus()) {
-                        showFallback('whatsapp', results, contactInfo, phoneNumber);
-                        if (fullContent.length > maxWhatsAppLength) {
-                            document.getElementById(`result-${activeTab}`).innerHTML += `<p class='advice'>${translations[currentLanguage].bodyTruncated}</p>`;
-                        }
-                    }
-                    tabData[activeTab].isSentByWhatsApp = true;
-                    document.getElementById(`result-${activeTab}`).innerHTML += `<p class="sent-indicator">${translations[currentLanguage].sentToMayo}<img src="assets/whatsapp-sent.svg" alt="${translations[currentLanguage].whatsappSentIconAlt}" class="sent-icon"></p>`;
-                }, 500);
-            } catch (error) {
-                console.error('Fout bij openen WhatsApp:', error);
-                showFallback('whatsapp', results, contactInfo, phoneNumber);
-                if (fullContent.length > maxWhatsAppLength) {
-                    document.getElementById(`result-${activeTab}`).innerHTML += `<p class='advice'>${translations[currentLanguage].bodyTruncated}</p>`;
-                }
-                tabData[activeTab].isSentByWhatsApp = true;
-                document.getElementById(`result-${activeTab}`).innerHTML += `<p class="sent-indicator">${translations[currentLanguage].sentToMayo}<img src="assets/whatsapp-sent.svg" alt="${translations[currentLanguage].whatsappSentIconAlt}" class="sent-icon"></p>`;
-            }
-        });
-        function showFallback(type, results, contactInfo, phoneNumber = '') {
-            const t = translations[currentLanguage];
-            const message = type === 'email' ? t.emailError : t.whatsappError.replace('{phoneNumber}', phoneNumber);
-            const content = `${t.result[type === 'email' ? 'emailSubject' : 'whatsappTitle']} - ${tabData[activeTab].tabName}:\n\n${results}\n\n${contactInfo}`;
-            const resultElem = document.getElementById(`result-${activeTab}`);
-            resultElem.innerHTML += `
-                <p class="advice">${message}</p>
-                <textarea readonly style="width: 100%; height: 100px;" aria-label="${t.copyTextAria}">${content}</textarea>
-                <button type="button" class="copy-button" style="margin-top: 10px; background: var(--success);">Kopieer naar klembord</button>
-            `;
-            resultElem.querySelector('.copy-button').addEventListener('click', () => {
-                navigator.clipboard.writeText(content)
-                    .then(() => alert(t.copySuccess))
-                    .catch(() => alert(t.copyError));
-            });
-        }
-        document.querySelectorAll('.language-button').forEach(button => button.addEventListener('click', () => {
-            if (button.dataset.lang !== currentLanguage) updateLanguage(button.dataset.lang);
-        }));
-        createTab();
-    </script>
+        calc(id);
+      }
+    });
+    const c=data.contact||{};
+    if(c.name) document.getElementById('c-name').value=c.name;
+    if(c.addr) document.getElementById('c-addr').value=c.addr;
+    if(c.pc) document.getElementById('c-pc').value=c.pc;
+    if(c.place) document.getElementById('c-place').value=c.place;
+    if(c.phone) document.getElementById('c-phone').value=c.phone;
+    if(c.email) document.getElementById('c-email').value=c.email;
+    if(c.boxes) document.getElementById('c-boxes').checked=true;
+    if(c.mat) document.getElementById('c-mat').checked=true;
+    toast(t('loaded'));
+  },100);
+}
+
+function exportPdf(){
+  const {jsPDF}=window.jspdf;
+  const doc=new jsPDF();
+  let y=15;
+  doc.setFontSize(16); doc.text(t('title'),20,y); y+=10;
+  Object.keys(tabs).forEach(id=>{
+    const d=tabs[id];
+    doc.setFontSize(12); doc.text(d.name,20,y); y+=7;
+    doc.setFontSize(10);
+    doc.text(`${t('boxes')}: ${d.boxes||'-'}  ${t('remaining')}: ${(d.rem||0).toFixed(1)} cm`,20,y); y+=6;
+    if(d.parts){
+      Object.entries(d.parts).forEach(([k,v])=>{
+        if(v>0){ doc.text(`${k}: ${v}`,25,y); y+=5; if(y>270){doc.addPage();y=15;} }
+      });
+    }
+    y+=8;
+  });
+  const c=getContact();
+  doc.text(`Contact: ${c.name} ${c.phone} ${c.email}`,20,y);
+  doc.save('mayo-ligbox.pdf');
+}
+
+function sendMail(){
+  if(!document.getElementById('c-phone').value){toast(t('phoneReq'));return;}
+  const c=getContact();
+  const wallLabel = {yes:t('yes'), no:t('noBeugel'), panel:t('panel')};
+  let body = t('title') + '\n' + '='.repeat(40) + '\n\n';
+
+  Object.keys(tabs).forEach(id=>{
+    const d = tabs[id];
+    const len = document.getElementById('len-'+id)?.value || d.len;
+    const dep = document.getElementById('dep-'+id)?.value || d.dep;
+    const lw = document.getElementById('lw-'+id)?.value || d.lw;
+    const rw = document.getElementById('rw-'+id)?.value || d.rw;
+    const dbl = document.getElementById('dbl-'+id)?.value || d.dbl;
+    const bw = document.getElementById('bw-'+id)?.value || d.bw;
+    const bg = document.getElementById('bg-'+id)?.value || d.bg;
+
+    body += d.name + '\n' + '-'.repeat(30) + '\n';
+    body += t('length') + ': ' + len + ' cm\n';
+    body += t('depth') + ': ' + dep + ' cm\n';
+    body += t('leftWall') + ': ' + (wallLabel[lw]||lw) + '\n';
+    body += t('rightWall') + ': ' + (wallLabel[rw]||rw) + '\n';
+    body += t('double') + ': ' + (dbl==='yes'?t('yes'):t('no')) + '\n';
+    body += t('boxW') + ': ' + bw + ' cm\n';
+    body += t('beugel') + ': ' + bg + ' cm\n\n';
+
+    body += t('result') + ':\n';
+    body += '  ' + t('boxes') + ': ' + (d.boxes ?? '-') + '\n';
+    body += '  ' + t('remaining') + ': ' + (d.rem!=null ? Number(d.rem).toFixed(1)+' cm' : '-') + '\n';
+    body += '  ' + t('space') + ': ' + (d.space!=null ? Number(d.space).toFixed(1)+' cm' : '-') + '\n\n';
+
+    if(d.parts){
+      body += t('parts') + ':\n';
+      const labels={posts:t('posts'),brackets:t('brackets'),head:t('head'),endHead:t('endHead'),wavy:t('wavy'),couplers:t('couplers'),endW:t('endW'),close:t('close'),anchors:t('anchors'),m12:t('m12'),m10:t('m10'),caps:t('caps'),capB:t('capB'),u:t('u'),mattress:t('mattress'),strip:t('strip'),knee:t('knee'),endP:t('endP')};
+      Object.entries(d.parts).forEach(([k,v])=>{
+        if(k==='endHW') return;
+        if(k==='endP'&&lang!=='nl') return;
+        if(v>0) body += '  ' + (labels[k]||k) + ': ' + v + '\n';
+      });
+      body += '\n';
+    }
+  });
+
+  body += '='.repeat(40) + '\n';
+  body += t('contact') + ':\n';
+  body += t('name') + ': ' + c.name + '\n';
+  body += t('address') + ': ' + c.addr + '\n';
+  body += t('postcode') + ': ' + c.pc + '\n';
+  body += t('place') + ': ' + c.place + '\n';
+  body += t('phone') + ': ' + c.phone + '\n';
+  body += t('email') + ': ' + c.email + '\n';
+  body += t('boxesInterest') + ': ' + (c.boxes?'Ja':'Nee') + '\n';
+  if(c.boxes){
+    body += '  ' + t('withMat') + ': ' + (c.withMat?'Ja':'Nee') + '\n';
+    body += '  ' + t('withDeep') + ': ' + (c.withDeep?'Ja':'Nee') + '\n';
+  }
+  body += t('matInterest') + ': ' + (c.mat?'Ja':'Nee') + '\n';
+
+  const subject = t('title') + (c.name ? ' - ' + c.name : '');
+  window.location.href = 'mailto:rob@moduulbouw.nl?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
+}
+
+function sendWa(){
+  const c=getContact();
+  const wallLabel = {yes:t('yes'), no:t('noBeugel'), panel:t('panel')};
+  let body = t('title') + '\n' + '='.repeat(40) + '\n\n';
+
+  Object.keys(tabs).forEach(id=>{
+    const d = tabs[id];
+    const len = document.getElementById('len-'+id)?.value || d.len;
+    const dep = document.getElementById('dep-'+id)?.value || d.dep;
+    const lw = document.getElementById('lw-'+id)?.value || d.lw;
+    const rw = document.getElementById('rw-'+id)?.value || d.rw;
+    const dbl = document.getElementById('dbl-'+id)?.value || d.dbl;
+    const bw = document.getElementById('bw-'+id)?.value || d.bw;
+    const bg = document.getElementById('bg-'+id)?.value || d.bg;
+
+    body += d.name + '\n' + '-'.repeat(30) + '\n';
+    body += t('length') + ': ' + len + ' cm\n';
+    body += t('depth') + ': ' + dep + ' cm\n';
+    body += t('leftWall') + ': ' + (wallLabel[lw]||lw) + '\n';
+    body += t('rightWall') + ': ' + (wallLabel[rw]||rw) + '\n';
+    body += t('double') + ': ' + (dbl==='yes'?t('yes'):t('no')) + '\n';
+    body += t('boxW') + ': ' + bw + ' cm\n';
+    body += t('beugel') + ': ' + bg + ' cm\n\n';
+
+    body += t('result') + ':\n';
+    body += '  ' + t('boxes') + ': ' + (d.boxes ?? '-') + '\n';
+    body += '  ' + t('remaining') + ': ' + (d.rem!=null ? Number(d.rem).toFixed(1)+' cm' : '-') + '\n';
+    body += '  ' + t('space') + ': ' + (d.space!=null ? Number(d.space).toFixed(1)+' cm' : '-') + '\n\n';
+
+    if(d.parts){
+      body += t('parts') + ':\n';
+      const labels={posts:t('posts'),brackets:t('brackets'),head:t('head'),endHead:t('endHead'),wavy:t('wavy'),couplers:t('couplers'),endW:t('endW'),close:t('close'),anchors:t('anchors'),m12:t('m12'),m10:t('m10'),caps:t('caps'),capB:t('capB'),u:t('u'),mattress:t('mattress'),strip:t('strip'),knee:t('knee'),endP:t('endP')};
+      Object.entries(d.parts).forEach(([k,v])=>{
+        if(k==='endHW') return;
+        if(k==='endP'&&lang!=='nl') return;
+        if(v>0) body += '  ' + (labels[k]||k) + ': ' + v + '\n';
+      });
+      body += '\n';
+    }
+  });
+
+  body += '='.repeat(40) + '\n';
+  body += t('contact') + ':\n';
+  body += t('name') + ': ' + c.name + '\n';
+  body += t('address') + ': ' + c.addr + '\n';
+  body += t('postcode') + ': ' + c.pc + '\n';
+  body += t('place') + ': ' + c.place + '\n';
+  body += t('phone') + ': ' + c.phone + '\n';
+  body += t('email') + ': ' + c.email + '\n';
+  body += t('boxesInterest') + ': ' + (c.boxes?'Ja':'Nee') + '\n';
+  if(c.boxes){
+    body += '  ' + t('withMat') + ': ' + (c.withMat?'Ja':'Nee') + '\n';
+    body += '  ' + t('withDeep') + ': ' + (c.withDeep?'Ja':'Nee') + '\n';
+  }
+  body += t('matInterest') + ': ' + (c.mat?'Ja':'Nee') + '\n';
+
+  window.open('https://wa.me/31630569255?text=' + encodeURIComponent(body), '_blank');
+}
+
+// init
+document.getElementById('addTab').onclick=()=>addTab();
+document.getElementById('printBtn').onclick=()=>window.print();
+document.getElementById('mailBtn').onclick=sendMail;
+document.getElementById('waBtn').onclick=sendWa;
+document.querySelectorAll('.lang-btn').forEach(b=>b.onclick=()=>updateLang(b.dataset.lang));
+renderContact();
+addTab();
+</script>
 </body>
 </html>
