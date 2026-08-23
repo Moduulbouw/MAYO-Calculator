@@ -179,8 +179,8 @@ function createForm(id){
   return `
   <div class="card tab-content" id="content-${id}" style="display:${id===active?'block':'none'}">
     <div class="form-grid">
-      <div><label>${t('length')}</label><input type="number" id="len-${id}" min="1" value="${d.len||''}" placeholder="0"></div>
-      <div><label>${t('depth')}</label><input type="number" id="dep-${id}" min="1" value="${d.dep||''}" placeholder="0"></div>
+      <div><label>${t('length')}</label><input type="number" id="len-${id}" min="1" value="${d.len||''}" placeholder=""></div>
+      <div><label>${t('depth')}</label><input type="number" id="dep-${id}" min="1" value="${d.dep||''}" placeholder=""></div>
       <div><label>${t('leftWall')}</label>
         <select id="lw-${id}">
           <option value="yes" ${d.lw==='yes'?'selected':''}>${t('yes')}</option>
@@ -211,7 +211,7 @@ function createForm(id){
 function addTab(name){
   counter++;
   const id = 't'+counter;
-  tabs[id] = {name: name||`${t('add').replace('Nieuw ','').replace('Neues ','').replace('Nouveau ','').replace('New ','')} ${counter}`, len:'0',dep:'0',lw:'yes',rw:'yes',dbl:'no',bw:115,bg:175,manualBg:false};
+  tabs[id] = {name: name||`${t('add').replace('Nieuw ','').replace('Neues ','').replace('Nouveau ','').replace('New ','')} ${counter}`, len:'',dep:'',lw:'yes',rw:'yes',dbl:'no',bw:115,bg:175,manualBg:false};
   const tab = document.createElement('div');
   tab.className = 'tab'+(active? '':' active');
   tab.id = id;
